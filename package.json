@@ -1,0 +1,24 @@
+{
+  "name": "animehut",
+  "version": "1.0.0",
+  "description": "automatically downloads anime episodes",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scrythe/AnimeHut.git"
+  },
+  "keywords": [
+    "automatic",
+    "anime",
+    "downloader"
+  ],
+  "author": "scrythe",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scrythe/AnimeHut/issues"
+  },
+  "homepage": "https://github.com/scrythe/AnimeHut#readme"
+}

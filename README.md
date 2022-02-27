@@ -1,2 +1,3 @@
 # Animehut
-automatically downloads animes and series
+
+automatically downloads anime episodes
