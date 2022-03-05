@@ -20,5 +20,10 @@
   "bugs": {
     "url": "https://github.com/scrythe/AnimeHut/issues"
   },
-  "homepage": "https://github.com/scrythe/AnimeHut#readme"
+  "homepage": "https://github.com/scrythe/AnimeHut#readme",
+  "dependencies": {
+    "axios": "^0.26.0",
+    "cheerio": "^1.0.0-rc.10",
+    "puppeteer": "^13.4.1"
+  }
 }
