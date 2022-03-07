@@ -1,15 +1,14 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import puppeteer from 'puppeteer';
 
 let animeEpisodes: string[] = [
   'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
-  'https://anicloud.io',
   'https://anicloud.io/anime/stream/toradora/staffel-1/episode-19',
   'https://anicloud.io/anime/stream/toradora/staffel-1/episode-20',
   'https://anicloud.io/anime/stream/toradora/staffel-1/episode-21',
   'https://anicloud.io/anime/stream/toradora/staffel-1/episode-22',
 ];
-// document.querySelector('.hosterSiteVideo > ul li div a h4')
 
 function getStreamLinks(url: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
@@ -42,28 +41,11 @@ function getStreamLinks(url: string): Promise<string> {
       return !!link;
     }
   );
-  console.log(animeStreamLinks);
-
-  /* let animeStreamLinks = await animeEpisodes.map(async (link) => {
-    let test = await getStreamLinks(link);
-    return await getStreamLinks(link);
-  });
-  console.log(animeStreamLinks); */
-  /* animeEpisodes.forEach((link) => {
-    getStreamLinks(
-      'https://anicloud.io/anime/stream/toradora/staffel-1/episode-800'
-    )
-      .then((link) => console.log(link))
-      .catch((err) => console.log(err));
-  }); */
+  const browser = await puppeteer.launch({ headless: false });
+  animeStreamLinks.forEach((url) => goToUrl(browser, url));
 })();
 
-/* (async () => {
-  const browser = await puppeteer.launch({ headless: false });
-  animeEpisodes.forEach((url) => goToUrl(browser, url));
-})(); */
-
-/* async function goToUrl(browser, url) {
+async function goToUrl(browser: puppeteer.Browser, url: string) {
   const page = await browser.newPage();
   await page.goto(url);
-} */
+}
