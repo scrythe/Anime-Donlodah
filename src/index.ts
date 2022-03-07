@@ -1,6 +1,8 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-extra';
+import { Browser } from 'puppeteer';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 let animeEpisodes: string[] = [
   'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
@@ -41,11 +43,13 @@ function getStreamLinks(url: string): Promise<string> {
       return !!link;
     }
   );
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer
+    .use(StealthPlugin())
+    .launch({ headless: false });
   animeStreamLinks.forEach((url) => goToUrl(browser, url));
 })();
 
-async function goToUrl(browser: puppeteer.Browser, url: string) {
+async function goToUrl(browser: Browser, url: string) {
   const page = await browser.newPage();
   await page.goto(url);
 }
