@@ -50,6 +50,37 @@ function getStreamLinks(url: string): Promise<string> {
 })();
 
 async function goToUrl(browser: Browser, url: string) {
+  let streamTapeUrl = new URL('https://streamtape.com/');
   const page = await browser.newPage();
   await page.goto(url);
+  let puppeteerUrl = new URL(page.url());
+  if (puppeteerUrl.hostname != streamTapeUrl.hostname) {
+    await page.reload();
+  }
+  // recaptcha challenge expires in two minutes
+  await page.waitForNavigation().catch(async (error) => {
+    console.error(error);
+    await page.reload();
+    await page.waitForNavigation();
+  });
+  puppeteerUrl.href = page.url();
+  if (puppeteerUrl.hostname == streamTapeUrl.hostname) {
+    await page.waitForSelector('video');
+    // document.querySelector('.plyr-overlay').click()
+    /* await page.click('video');
+    await page.click('video'); */
+    let streamHref = await page.evaluate(async () => {
+      let videoElement = document.querySelector('video');
+      if (videoElement) {
+        videoElement.click();
+        videoElement.click();
+        videoElement.click();
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+        console.log(videoElement);
+        return videoElement.src;
+      }
+      return null;
+    });
+    console.log(streamHref);
+  }
 }
