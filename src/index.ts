@@ -21,7 +21,7 @@ function getStreamLinks(url: string): Promise<string> {
     });
     const $ = cheerio.load(res.data);
     let linkElement = $(
-      '.hosterSiteVideo > ul > li > div > a > h4:contains(Streamtape)'
+      '.hosterSiteVideo > ul > li > div > a > h4:contains(VOE)'
     )
       .parent()
       .attr('href');
@@ -46,41 +46,38 @@ function getStreamLinks(url: string): Promise<string> {
   const browser = await puppeteer
     .use(StealthPlugin())
     .launch({ headless: false });
-  animeStreamLinks.forEach((url) => goToUrl(browser, url));
+  let voeUrlsPromises = animeStreamLinks.map((url) => {
+    return goToUrl(browser, url).catch((error) => console.error(error));
+  });
+  let voeUrls = (await Promise.all(voeUrlsPromises)).filter(
+    (url): url is string => {
+      return !!url;
+    }
+  );
+  browser.close();
+  console.log(voeUrls);
 })();
 
-async function goToUrl(browser: Browser, url: string) {
-  let streamTapeUrl = new URL('https://streamtape.com/');
-  const page = await browser.newPage();
-  await page.goto(url);
-  let puppeteerUrl = new URL(page.url());
-  if (puppeteerUrl.hostname != streamTapeUrl.hostname) {
-    await page.reload();
-  }
-  // recaptcha challenge expires in two minutes
-  await page.waitForNavigation().catch(async (error) => {
-    console.error(error);
-    await page.reload();
-    await page.waitForNavigation();
-  });
-  puppeteerUrl.href = page.url();
-  if (puppeteerUrl.hostname == streamTapeUrl.hostname) {
-    await page.waitForSelector('video');
-    // document.querySelector('.plyr-overlay').click()
-    /* await page.click('video');
-    await page.click('video'); */
-    let streamHref = await page.evaluate(async () => {
-      let videoElement = document.querySelector('video');
-      if (videoElement) {
-        videoElement.click();
-        videoElement.click();
-        videoElement.click();
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        console.log(videoElement);
-        return videoElement.src;
-      }
-      return null;
+function goToUrl(browser: Browser, url: string): Promise<string> {
+  return new Promise(async (resolve, reject) => {
+    let voeUrl = new URL('https://voe.sx/');
+    const page = await browser.newPage();
+    await page.goto(url);
+    let puppeteerUrl = new URL(page.url());
+    if (puppeteerUrl.hostname != voeUrl.hostname) {
+      await page.reload();
+    }
+    // recaptcha challenge expires in two minutes
+    await page.waitForNavigation().catch(async (error) => {
+      console.error(error);
+      await page.reload();
+      await page.waitForNavigation();
     });
-    console.log(streamHref);
-  }
+    puppeteerUrl.href = page.url();
+    if (puppeteerUrl.hostname == voeUrl.hostname) {
+      resolve(page.url());
+    } else {
+      reject(`Page: ${page.url()} is not a VOE url`);
+    }
+  });
 }
