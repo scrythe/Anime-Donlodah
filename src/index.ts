@@ -21,7 +21,7 @@ function getStreamLinks(url: string): Promise<string> {
     });
     const $ = cheerio.load(res.data);
     let linkElement = $(
-      '.hosterSiteVideo > ul > li > div > a > h4:contains(VOE)'
+      '.hosterSiteVideo > ul > li > div > a > h4:contains(Streamtape)'
     )
       .parent()
       .attr('href');
@@ -36,11 +36,11 @@ function getStreamLinks(url: string): Promise<string> {
 
 function goToUrl(browser: Browser, url: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
-    let voeUrl = new URL('https://voe.sx/');
+    let streamTapeUrl = new URL('https://streamtape.com/');
     const page = await browser.newPage();
     await page.goto(url);
     let puppeteerUrl = new URL(page.url());
-    if (puppeteerUrl.hostname != voeUrl.hostname) {
+    if (puppeteerUrl.hostname != streamTapeUrl.hostname) {
       await page.reload();
     }
     // recaptcha challenge expires in two minutes
@@ -50,34 +50,28 @@ function goToUrl(browser: Browser, url: string): Promise<string> {
       await page.waitForNavigation();
     });
     puppeteerUrl.href = page.url();
-    if (puppeteerUrl.hostname == voeUrl.hostname) {
-      let voeUrlLink = page.url();
+    if (puppeteerUrl.hostname == streamTapeUrl.hostname) {
+      let streamTapeUrlLink = page.url();
       page.close();
-      resolve(voeUrlLink);
+      resolve(streamTapeUrlLink);
     } else {
-      reject(`Page: ${page.url()} is not a VOE url`);
+      reject(`Page: ${page.url()} is not a Streamtape url`);
     }
   });
 }
 
 function getDownloadLink(browser: Browser, url: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
-    let xbudUrl = new URL('https://9xbud.com/');
-    xbudUrl.pathname = url;
-    let page = await browser.newPage();
-    await page.goto(xbudUrl.href);
-    // await page.waitForNavigation();
-    let downloadLinkXpath =
-      "(//a/span[contains(text(), 'Download Now')]/parent::a)[1]";
-    await page.waitForXPath(downloadLinkXpath);
-    let downloadLinks = await page.$x(downloadLinkXpath);
-    let getdownloadLinkJson = await downloadLinks[0].getProperty('href');
-    let getDownloadLink: string | undefined =
-      await getdownloadLinkJson.jsonValue();
-    if (getDownloadLink) {
-      resolve(getDownloadLink);
+    const res = await axios.get(url).catch((error) => {
+      throw Error(error);
+    });
+    const $ = cheerio.load(res.data);
+    let videoLink: string | undefined = $('#robotlink').text();
+    if (videoLink) {
+      resolve(videoLink);
+    } else {
+      reject(`Element ${videoLink} not found on site ${url}`);
     }
-    reject('Download Link not found');
   });
 }
 
@@ -93,15 +87,15 @@ function getDownloadLink(browser: Browser, url: string): Promise<string> {
   const browser = await puppeteer
     .use(StealthPlugin())
     .launch({ headless: false });
-  let voeUrlsPromises = animeStreamLinks.map((url) => {
+  let streamTapeUrlsPromises = animeStreamLinks.map((url) => {
     return goToUrl(browser, url).catch((error) => console.error(error));
   });
-  let voeUrls = (await Promise.all(voeUrlsPromises)).filter(
+  let streamTapeUrls = (await Promise.all(streamTapeUrlsPromises)).filter(
     (url): url is string => {
       return !!url;
     }
   );
-  let downloadLinksPromises = voeUrls.map((url) => {
+  let downloadLinksPromises = streamTapeUrls.map((url) => {
     return getDownloadLink(browser, url).catch((error) => console.error(error));
   });
   let downloadLinks = (await Promise.all(downloadLinksPromises)).filter(
