@@ -62,44 +62,50 @@ function goToUrl(browser: Browser, url: string): Promise<string> {
 }
 
 function getDownloadLink(browser: Browser, url: string): Promise<string> {
-  /* let scriptTag = `document.getElementById('ideoolink').innerHTML = "/streamtape.com" + ''+ ('xcdb/get_video?id=DlzYGBo18dIwkV&expires=1646924575&ip=F0yQKRWPES9XKxR&token=15qHGdLsKzcI').substring(1).substring(2);
-document.getElementById('ideoolink').innerHTML = "//streamtape.co" + ''+ ('xnftb/get_video?id=DlzYGBo18dIwkV&expires=1646924575&ip=F0yQKRWPES9XKxR&token=15qHGdLsKzcI').substring(3).substring(1);
-document.getElementById('robotlink').innerHTML = '//streamtape.co'+ ('xcdm/get_video?id=DlzYGBo18dIwkV&expires=1646924575&ip=F0yQKRWPES9XKxR&token=15qHGdLsKzcI').substring(2).substring(1);
-`; */
-  // $x(`//script[contains(text(), "document.getElementById('robotlink').innerHTML")]`)[0]
-  // let beginningValue = scriptTag.indexOf(`document.getElementById('robotlink').innerHTML`)
-  // let videoLinkFunction = scriptTag.substring(beginningValue, endingValue);
-  // let videoLinkFunc = videoLinkFunction.replace(`document.getElementById('robotlink').innerHTML`, 'videoLink');
-  // eval(videoLinkFunc)
-  // videoLink
   return new Promise(async (resolve, reject) => {
     const res = await axios.get(url).catch((error) => {
       throw Error(error);
+      // reject
     });
     const $ = cheerio.load(res.data);
     let getElementText = "document.getElementById('robotlink').innerHTML";
     let scriptTag = $(`script:contains(${getElementText})`).html();
     if (scriptTag) {
-      let scriptTagBeginning = scriptTag.indexOf(getElementText);
-      let scriptTagEnding = scriptTag.lastIndexOf(';');
-      let scriptTagFunction = scriptTag.substring(
-        scriptTagBeginning,
-        scriptTagEnding
+      let videoLink = await getVideoUrl(scriptTag, getElementText, url).catch(
+        (error) => reject(error)
       );
-      let videoLinkFunction = scriptTagFunction.replace(
-        getElementText,
-        'videoLink'
-      );
-      const sandBox = { videoLink: 'toradora' };
-      vm.createContext(sandBox);
-      vm.runInContext(videoLinkFunction, sandBox);
-      if (sandBox.videoLink) {
-        resolve(sandBox.videoLink);
-      } else {
-        reject(`Element ${sandBox.videoLink} not found on site ${url}`);
+      if (videoLink) {
+        resolve(videoLink);
       }
     } else {
       reject(`Element ${scriptTag} not found on site ${url}`);
+    }
+  });
+}
+
+function getVideoUrl(
+  scriptTag: string,
+  getElementText: string,
+  url: string
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    let scriptTagBeginning = scriptTag.indexOf(getElementText);
+    let scriptTagEnding = scriptTag.lastIndexOf(';');
+    let scriptTagFunction = scriptTag.substring(
+      scriptTagBeginning,
+      scriptTagEnding
+    );
+    let videoLinkFunction = scriptTagFunction.replace(
+      getElementText,
+      'videoLink'
+    );
+    const sandBox = { videoLink: 'toradora' };
+    vm.createContext(sandBox);
+    vm.runInContext(videoLinkFunction, sandBox);
+    if (sandBox.videoLink) {
+      resolve(sandBox.videoLink);
+    } else {
+      reject(`Element ${sandBox.videoLink} not found on site ${url}`);
     }
   });
 }
