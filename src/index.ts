@@ -44,7 +44,7 @@ function goToUrl(browser: Browser, url: string): Promise<string> {
       await page.reload();
     }
     // recaptcha challenge expires in two minutes
-    await page.waitForNavigation().catch(async (error) => {
+    await page.waitForNavigation({ timeout: 36000000 }).catch(async (error) => {
       console.error(error);
       await page.reload();
       await page.waitForNavigation();
@@ -60,19 +60,25 @@ function goToUrl(browser: Browser, url: string): Promise<string> {
   });
 }
 
-async function getDownloadLink(browser: Browser, url: string) {
-  let xbudUrl = new URL('https://9xbud.com/');
-  xbudUrl.pathname = url;
-  let page = await browser.newPage();
-  await page.goto(xbudUrl.href);
-  // await page.waitForNavigation();
-  let downloadLinkXpath =
-    "//a/span[contains(text(), 'Download Now')]/parent::a";
-  await page.waitForXPath(downloadLinkXpath);
-  let downloadLinks = await page.$x(downloadLinkXpath);
-  let getdownloadLinkJson = await downloadLinks[1].getProperty('href');
-  let getDownloadLink: string = await getdownloadLinkJson.jsonValue();
-  console.log(getDownloadLink);
+function getDownloadLink(browser: Browser, url: string): Promise<string> {
+  return new Promise(async (resolve, reject) => {
+    let xbudUrl = new URL('https://9xbud.com/');
+    xbudUrl.pathname = url;
+    let page = await browser.newPage();
+    await page.goto(xbudUrl.href);
+    // await page.waitForNavigation();
+    let downloadLinkXpath =
+      "(//a/span[contains(text(), 'Download Now')]/parent::a)[1]";
+    await page.waitForXPath(downloadLinkXpath);
+    let downloadLinks = await page.$x(downloadLinkXpath);
+    let getdownloadLinkJson = await downloadLinks[0].getProperty('href');
+    let getDownloadLink: string | undefined =
+      await getdownloadLinkJson.jsonValue();
+    if (getDownloadLink) {
+      resolve(getDownloadLink);
+    }
+    reject('Download Link not found');
+  });
 }
 
 (async () => {
@@ -95,6 +101,13 @@ async function getDownloadLink(browser: Browser, url: string) {
       return !!url;
     }
   );
-  voeUrls.forEach((url) => getDownloadLink(browser, url));
-  // getDownloadLink(browser, 'https://voe.sx/e/7ssj4bw9djeg');
+  let downloadLinksPromises = voeUrls.map((url) => {
+    return getDownloadLink(browser, url).catch((error) => console.error(error));
+  });
+  let downloadLinks = (await Promise.all(downloadLinksPromises)).filter(
+    (link): link is string => {
+      return !!link;
+    }
+  );
+  console.log(downloadLinks);
 })();
