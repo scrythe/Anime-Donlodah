@@ -68,7 +68,7 @@ function goToUrl(browser: Browser, url: string): Promise<string> {
   });
 }
 
-function getDownloadLink(browser: Browser, url: string): Promise<string> {
+function getDownloadLink(url: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
     const res = await axios.get(url).catch((error) => {
       throw Error(error);
@@ -117,6 +117,18 @@ function getVideoUrl(
   });
 }
 
+async function videoDownloadLinksFunction(
+  browser: Browser,
+  link: string
+): Promise<string> {
+  let page = await browser.newPage();
+  page.goto(link);
+  await page.waitForNavigation();
+  let videoDownloadLink = page.url();
+  page.close();
+  return videoDownloadLink;
+}
+
 function downloadVideos(
   link: string,
   saveFolder: string,
@@ -153,18 +165,22 @@ function downloadVideos(
     }
   );
   let downloadLinksPromises = streamTapeUrls.map((url) => {
-    return getDownloadLink(browser, url).catch((error) => console.error(error));
+    return getDownloadLink(url).catch((error) => console.error(error));
   });
   let downloadLinks = (await Promise.all(downloadLinksPromises)).filter(
     (link): link is string => {
       return !!link;
     }
   );
-  let saveFolder = path.join(__dirname, '..', 'downloads', 'toradora.mp4');
-  downloadLinks.forEach(async (link) => {
+  let videoDownloadLinksPromises = downloadLinks.map((link) => {
     let url = new URL(`https:${link}`);
-    console.log(url.href);
-    downloadVideos(url.href, saveFolder, () => {
+    return videoDownloadLinksFunction(browser, url.href);
+  });
+  let videoDownloadLinks = await Promise.all(videoDownloadLinksPromises);
+  browser.close();
+  let saveFolder = path.join(__dirname, '..', 'downloads', 'toradora.mp4');
+  videoDownloadLinks.forEach(async (link) => {
+    downloadVideos(link, saveFolder, () => {
       console.log(`successfully downloaded video from link ${link}`);
     });
   });
