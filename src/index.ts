@@ -4,6 +4,13 @@ import puppeteer from 'puppeteer-extra';
 import { Browser } from 'puppeteer';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import vm from 'vm';
+import fs from 'fs';
+import path from 'path';
+import https from 'https';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 let animeEpisodes: string[] = [
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
@@ -110,6 +117,21 @@ function getVideoUrl(
   });
 }
 
+function downloadVideos(
+  link: string,
+  saveFolder: string,
+  callback: () => void
+) {
+  let file = fs.createWriteStream(saveFolder);
+  https.get(link, (res) => {
+    res.pipe(file);
+    file.on('finish', () => {
+      // console.log('download complete');
+      file.close(callback);
+    });
+  });
+}
+
 (async () => {
   let animeStreamLinksPromises = animeEpisodes.map((link) =>
     getStreamLinks(link).catch((error) => console.error(error))
@@ -138,5 +160,12 @@ function getVideoUrl(
       return !!link;
     }
   );
-  console.log(downloadLinks);
+  let saveFolder = path.join(__dirname, '..', 'downloads', 'toradora.mp4');
+  downloadLinks.forEach(async (link) => {
+    let url = new URL(`https:${link}`);
+    console.log(url.href);
+    downloadVideos(url.href, saveFolder, () => {
+      console.log(`successfully downloaded video from link ${link}`);
+    });
+  });
 })();
