@@ -1,0 +1,41 @@
+{
+  res: IncomingMessage {
+    [Symbol(kHeaders)]: {
+      date: 'Thu, 10 Mar 2022 16:43:35 GMT',
+      'content-type': 'text/html; charset=UTF-8',
+      'transfer-encoding': 'chunked',
+      connection: 'close',
+      'cache-control': 'private',
+      'access-control-allow-origin': '*',
+      location: 'https://858143365.tapecontent.net/radosgw/wYbk842YRYSJOMq/_pOAuFub1nP78Acyd25BGPmPnwO7L2eSkSw0OEn06IBf2xhvX71UKf4x1meRDEkXAr4_d7HMwyAZfZm2XzM6xLfPTPKdiJf0IrVYJB2Lx6QMB_yjKy4e_yblyzve45auKOZ15szPFgQUK3saCUwrNLBu2IWdD8o57RE2wYmcvqsd_eXUNgfhMr7ljR_yXE0qAurzjBFDK3lDTEZWdh0Pqx8lFeOl-TbPV4VZzC5mCKGDlGn_aBkwS882ifyBZ4DajQZme3nQsELTZP2ZC0eKA3dwL5SF_dpVAKaHW9uTfGvvP3l2ktmpJ_ZjE_-7tVar8W65sG8_IYVG7P4n/Toradora.S01E20.German.720p.AAC.WebRip.x264-GSD.mp4',
+      'set-cookie': [Array],
+      'cf-cache-status': 'DYNAMIC',
+      'expect-ct': 'max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"',
+      'report-to': '{"endpoints":[{"url":"https:\\/\\/a.nel.cloudflare.com\\/report\\/v3?s=v6ic%2BFjwwOdGjo8ws8ld1%2BFTIsokLEbB1Y7Mp80cls98jcmZupIfedC1ZjmkqYFbeHGYxp8U843UfUnhmYDEh1EgMavdlDG5Y0mXA9HVnAAhEW5EWLgts%2Fa6f2kDY7j2eQ%3D%3D"}],"group":"cf-nel","max_age":604800}',
+      nel: '{"success_fraction":0,"report_to":"cf-nel","max_age":604800}',
+      server: 'cloudflare',
+      'cf-ray': '6e9d829b794677e9-VIE',
+      'alt-svc': 'h3=":443"; ma=86400, h3-29=":443"; ma=86400'
+    },
+    [Symbol(kHeadersCount)]: 30,
+    [Symbol(kTrailers)]: null,
+    [Symbol(kTrailersCount)]: 0,
+    [Symbol(RequestTimeout)]: undefined
+  },
+  aborted: false,
+  timeoutCb: null,
+  upgradeOrConnect: false,
+  parser: null,
+  maxHeadersCount: null,
+  reusedSocket: false,
+  host: 'streamtape.com',
+  protocol: 'https:',
+  [Symbol(kCapture)]: false,
+  [Symbol(kNeedDrain)]: false,
+  [Symbol(corked)]: 0,
+  [Symbol(kOutHeaders)]: [Object: null prototype] {
+    accept: [ 'Accept', 'application/json, text/plain, */*' ],
+    'user-agent': [ 'User-Agent', 'axios/0.26.0' ],
+    host: [ 'Host', 'streamtape.com' ]
+  }
+}

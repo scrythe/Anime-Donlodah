@@ -167,5 +167,22 @@ function downloadVideos(
     downloadVideos(url.href, saveFolder, () => {
       console.log(`successfully downloaded video from link ${link}`);
     });
+    fetch(url.href, {
+      redirect: 'manual',
+    }).then((res) => {
+      console.log(res);
+    });
+    /* const res = await axios({
+      url: url.href,
+      method: 'GET',
+      maxRedirects: 0,
+    }).catch((error) => {
+      if (error.request.res.statusCode === 302) {
+        return error.request;
+      }
+      throw Error(error);
+      // reject()
+    });
+    console.log(res); */
   });
 })();
