@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "tsc && node dist/index.js",
+    "build": "tsc",
     "watch": "tsc --watch",
     "release": "standard-version"
   },
