@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "start": "tsc && node dist/index.js",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "release": "standard-version"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "puppeteer-extra-plugin-stealth": "^2.9.0"
   },
   "devDependencies": {
+    "standard-version": "^9.3.2",
     "typescript": "^4.6.2"
   }
 }
