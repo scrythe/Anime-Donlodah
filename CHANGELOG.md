@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/scrythe/AnimeHut/compare/v2.0.0...v2.1.0) (2022-03-12)
+
+
+### Features
+
+* download multiple episodes ([09b4c19](https://github.com/scrythe/AnimeHut/commit/09b4c191463a5dc92721ad4a595f04257637c0d6))
+
 ## 2.0.0 (2022-03-11)
 
 
