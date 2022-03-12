@@ -1,16 +1,16 @@
 import axios from 'axios';
-import * as cheerio from 'cheerio';
+import { load } from 'cheerio';
 import puppeteer from 'puppeteer-extra';
 import { Browser } from 'puppeteer';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import vm from 'vm';
-import fs from 'fs';
-import path from 'path';
-import https from 'https';
+import { createContext, runInContext } from 'vm';
+import { createWriteStream } from 'fs';
+import { dirname, join, basename } from 'path';
+import { get } from 'https';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
 let animeEpisodes: string[] = [
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
@@ -28,7 +28,7 @@ function getStreamLinks(url: string): Promise<string> {
       throw Error(error);
       // reject();
     });
-    const $ = cheerio.load(res.data);
+    const $ = load(res.data);
     let linkElement = $(
       '.hosterSiteVideo > ul > li > div > a > h4:contains(Streamtape)'
     )
@@ -75,7 +75,7 @@ function getDownloadLink(url: string): Promise<string> {
       throw Error(error);
       // reject
     });
-    const $ = cheerio.load(res.data);
+    const $ = load(res.data);
     let getElementText = "document.getElementById('robotlink').innerHTML";
     let scriptTag = $(`script:contains(${getElementText})`).html();
     if (scriptTag) {
@@ -108,8 +108,8 @@ function getVideoUrl(
       'videoLink'
     );
     const sandBox = { videoLink: 'toradora' };
-    vm.createContext(sandBox);
-    vm.runInContext(videoLinkFunction, sandBox);
+    createContext(sandBox);
+    runInContext(videoLinkFunction, sandBox);
     if (sandBox.videoLink) {
       resolve(sandBox.videoLink);
     } else {
@@ -136,8 +136,8 @@ function downloadVideos(
   callback: () => void
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    let file = fs.createWriteStream(saveFolder);
-    https.get(link, (res) => {
+    let file = createWriteStream(saveFolder);
+    get(link, (res) => {
       res.pipe(file);
       file.on('finish', () => {
         // console.log('download complete');
@@ -182,10 +182,10 @@ function downloadVideos(
   });
   let videoDownloadLinks = await Promise.all(videoDownloadLinksPromises);
   browser.close();
-  let saveFolder = path.join(__dirname, '..', 'downloads');
+  let saveFolder = join(__dirname, '..', 'downloads');
   for (const link of videoDownloadLinks) {
-    let fileName = path.basename(link);
-    let pathToFile = path.join(saveFolder, fileName);
+    let fileName = basename(link);
+    let pathToFile = join(saveFolder, fileName);
     await downloadVideos(link, pathToFile, () => {
       console.log(`successfully downloaded video ${fileName}`);
     });
