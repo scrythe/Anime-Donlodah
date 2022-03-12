@@ -191,21 +191,3 @@ function downloadVideos(
     });
   }
 })();
-
-/* (async () => {
-  function promiseFunction(): Promise<string> {
-    return new Promise((resolve) => {
-      setTimeout(() => resolve('2'), 4000);
-    });
-  }
-  let promiseObject = [
-    promiseFunction,
-    promiseFunction,
-    promiseFunction,
-    promiseFunction,
-  ];
-  for (const iterator of promiseObject) {
-    let variablePromiseTest = await iterator();
-    console.log(variablePromiseTest);
-  }
-})(); */
