@@ -14,10 +14,11 @@ const __dirname = path.dirname(__filename);
 
 let animeEpisodes: string[] = [
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
+
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-19',
-  'https://anicloud.io/anime/stream/toradora/staffel-1/episode-20',
-  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-21',
-  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-22',
+  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-20',
+  'https://anicloud.io/anime/stream/toradora/staffel-1/episode-21',
+  'https://anicloud.io/anime/stream/toradora/staffel-1/episode-22',
 ];
 
 function getStreamLinks(url: string): Promise<string> {
@@ -133,13 +134,16 @@ function downloadVideos(
   link: string,
   saveFolder: string,
   callback: () => void
-) {
-  let file = fs.createWriteStream(saveFolder);
-  https.get(link, (res) => {
-    res.pipe(file);
-    file.on('finish', () => {
-      // console.log('download complete');
-      file.close(callback);
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    let file = fs.createWriteStream(saveFolder);
+    https.get(link, (res) => {
+      res.pipe(file);
+      file.on('finish', () => {
+        // console.log('download complete');
+        file.close(callback);
+        resolve();
+      });
     });
   });
 }
@@ -178,10 +182,30 @@ function downloadVideos(
   });
   let videoDownloadLinks = await Promise.all(videoDownloadLinksPromises);
   browser.close();
-  let saveFolder = path.join(__dirname, '..', 'downloads', 'toradora.mp4');
-  videoDownloadLinks.forEach(async (link) => {
-    downloadVideos(link, saveFolder, () => {
-      console.log(`successfully downloaded video from link ${link}`);
+  let saveFolder = path.join(__dirname, '..', 'downloads');
+  for (const link of videoDownloadLinks) {
+    let fileName = path.basename(link);
+    let pathToFile = path.join(saveFolder, fileName);
+    await downloadVideos(link, pathToFile, () => {
+      console.log(`successfully downloaded video ${fileName}`);
     });
-  });
+  }
 })();
+
+/* (async () => {
+  function promiseFunction(): Promise<string> {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve('2'), 4000);
+    });
+  }
+  let promiseObject = [
+    promiseFunction,
+    promiseFunction,
+    promiseFunction,
+    promiseFunction,
+  ];
+  for (const iterator of promiseObject) {
+    let variablePromiseTest = await iterator();
+    console.log(variablePromiseTest);
+  }
+})(); */
