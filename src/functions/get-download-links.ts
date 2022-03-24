@@ -37,7 +37,8 @@ function getVideoUrl(videoLinkVariable: string, url: string): Promise<string> {
     createContext(sandBox);
     runInContext(videoLinkVariable, sandBox);
     if (sandBox.videoLink) {
-      resolve(sandBox.videoLink);
+      const url = new URL(`https:${sandBox.videoLink}`);
+      resolve(url.href);
     } else {
       reject(`Element ${sandBox.videoLink} not found on site ${url}`);
     }

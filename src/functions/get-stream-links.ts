@@ -2,15 +2,6 @@ import axios from 'axios';
 import { load } from 'cheerio';
 import { Browser } from 'puppeteer';
 
-const animeEpisodes: string[] = [
-  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
-
-  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-19',
-  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-20',
-  'https://anicloud.io/anime/stream/toradora/staffel-1/episode-21',
-  'https://anicloud.io/anime/stream/toradora/staffel-1/episode-22',
-];
-
 function getRedirectUrl(url: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
     const mainUrl = new URL(url);
@@ -59,45 +50,28 @@ function goToUrl(browser: Browser, url: string): Promise<string> {
   });
 }
 
-function getRedirectLinks(animeEpisodes: string[]): Promise<string[]> {
+function getStreamTapeLink(browser: Browser, link: string): Promise<string> {
   return new Promise(async (resolve) => {
-    const animeStreamLinksPromises = animeEpisodes.map((link) =>
-      getRedirectUrl(link).catch((error) => console.error(error))
-    );
-    const animeStreamLinksResolved = await Promise.all(
-      animeStreamLinksPromises
-    );
-    const animeStreamLinks = animeStreamLinksResolved.filter(
-      (link): link is string => {
-        return !!link;
-      }
-    );
-    resolve(animeStreamLinks);
+    const redirectUrl = await getRedirectUrl(link);
+    const streamLink = await goToUrl(browser, redirectUrl);
+    resolve(streamLink);
   });
 }
 
-function getStreamLinks(
+export function getMultipleSteamTapeLinks(
   browser: Browser,
-  animeStreamLinks: string[]
+  links: string[]
 ): Promise<string[]> {
   return new Promise(async (resolve) => {
-    const streamTapeUrlsPromises = animeStreamLinks.map((url) => {
-      return goToUrl(browser, url).catch((error) => console.error(error));
+    const downloadLinksPromises = links.map((link) => {
+      return getStreamTapeLink(browser, link);
     });
-    const streamTapeUrlsResolved = await Promise.all(streamTapeUrlsPromises);
-    const streamTapeUrls = streamTapeUrlsResolved.filter(
+    const downloadLinks = await Promise.all(downloadLinksPromises);
+    /* const streamTapeUrls = streamTapeUrlsResolved.filter(
       (url): url is string => {
         return !!url;
       }
-    );
-    resolve(streamTapeUrls);
-  });
-}
-
-export function getStreamtapeLinks(browser: Browser): Promise<string[]> {
-  return new Promise(async (resolve) => {
-    const redirectLinks = await getRedirectLinks(animeEpisodes);
-    const streamLinks = await getStreamLinks(browser, redirectLinks);
-    resolve(streamLinks);
+    ); */
+    resolve(downloadLinks);
   });
 }

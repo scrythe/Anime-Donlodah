@@ -3,15 +3,8 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { dirname, join, basename } from 'path';
 import { fileURLToPath } from 'url';
 
-import {
-  getStreamLinks,
-  goToUrl,
-  getDownloadLink,
-  videoDownloadLinksFunction,
-  downloadVideos,
-} from './downloadFunction.js';
-
-import { getStreamtapeLinks } from './functions/get-stream-links.js';
+import { downloadVideos } from './functions/download-function.js';
+import { getMultipleSteamTapeLinks } from './functions/get-stream-links.js';
 import { getMultipleDownloadLinks } from './functions/get-download-links.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -20,9 +13,9 @@ const __dirname = dirname(__filename);
 let animeEpisodes: string[] = [
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
 
-  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-19',
+  // 'https://anicloud.io/anime/stream/toradora/staffel-1/-episode19',
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-20',
-  'https://anicloud.io/anime/stream/toradora/staffel-1/episode-21',
+  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-21',
   'https://anicloud.io/anime/stream/toradora/staffel-1/episode-22',
 ];
 
@@ -31,7 +24,10 @@ let animeEpisodes: string[] = [
     .use(StealthPlugin())
     .launch({ headless: false });
 
-  const streamTapeLinks = await getStreamtapeLinks(browser);
+  const streamTapeLinks = await getMultipleSteamTapeLinks(
+    browser,
+    animeEpisodes
+  );
   const downloadLinks = await getMultipleDownloadLinks(
     browser,
     streamTapeLinks
