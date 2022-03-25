@@ -3,15 +3,14 @@ import { load } from 'cheerio';
 import { createContext, runInContext } from 'vm';
 import { Browser } from 'puppeteer';
 
-function getDownloadLinkScript(url: string): Promise<string | null> {
+function getDownloadLinkScript(url: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
-    const res = await axios.get(url).catch((error) => {
-      throw Error(error);
-      // reject
-    });
+    const res = await axios.get(url).catch((error) => reject(error));
+    if (!res) return;
     const $ = load(res.data);
     const getElementText = "document.getElementById('robotlink').innerHTML";
     const scriptCode = $(`script:contains(${getElementText})`).html();
+    if (!scriptCode) return reject('element not found');
     resolve(scriptCode);
   });
 }
@@ -36,20 +35,21 @@ function getVideoUrl(videoLinkVariable: string, url: string): Promise<string> {
     const sandBox = { videoLink: 'toradora' };
     createContext(sandBox);
     runInContext(videoLinkVariable, sandBox);
-    if (sandBox.videoLink) {
-      const url = new URL(`https:${sandBox.videoLink}`);
-      resolve(url.href);
-    } else {
-      reject(`Element ${sandBox.videoLink} not found on site ${url}`);
-    }
+    if (sandBox.videoLink == 'toradora')
+      return reject(`Element ${sandBox.videoLink} not found on site`);
+    const url = new URL(`https:${sandBox.videoLink}`);
+    resolve(url.href);
   });
 }
 
 function getRedirectedLink(browser: Browser, link: string): Promise<string> {
-  return new Promise(async (resolve) => {
+  return new Promise(async (resolve, reject) => {
     let page = await browser.newPage();
     page.goto(link);
-    await page.waitForNavigation();
+    const redirect = await page
+      .waitForNavigation()
+      .catch((error) => reject(error));
+    if (!redirect) return;
     let videoDownloadLink = page.url();
     page.close();
     resolve(videoDownloadLink);
@@ -57,12 +57,20 @@ function getRedirectedLink(browser: Browser, link: string): Promise<string> {
 }
 
 function getDownloadLink(browser: Browser, url: string): Promise<string> {
-  return new Promise(async (resolve) => {
-    const scriptCode = await getDownloadLinkScript(url);
-    if (!scriptCode) throw Error;
+  return new Promise(async (resolve, reject) => {
+    const scriptCode = await getDownloadLinkScript(url).catch((error) =>
+      reject(error)
+    );
+    if (!scriptCode) return;
     const videoLinkVariable = getVideoLinkVariable(scriptCode);
-    const videoUrl = await getVideoUrl(videoLinkVariable, url);
-    const redirectedLink = getRedirectedLink(browser, videoUrl);
+    const videoUrl = await getVideoUrl(videoLinkVariable, url).catch((error) =>
+      reject(error)
+    );
+    if (!videoUrl) return;
+    const redirectedLink = await getRedirectedLink(browser, videoUrl).catch(
+      (error) => reject(error)
+    );
+    if (!redirectedLink) return;
     resolve(redirectedLink);
   });
 }
@@ -73,7 +81,9 @@ export function getMultipleDownloadLinks(
 ): Promise<string[]> {
   return new Promise(async (resolve) => {
     const downloadLinksPromises = urls.map((url) => {
-      return getDownloadLink(browser, url);
+      return getDownloadLink(browser, url).catch((error) =>
+        console.error(error)
+      );
     });
     const downloadLinksResolved = await Promise.all(downloadLinksPromises);
     const downloadLinks = downloadLinksResolved.filter(

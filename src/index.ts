@@ -4,7 +4,7 @@ import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 import { downloadMultipleVideos } from './functions/download-videos.js';
-import { getMultipleSteamTapeLinks } from './functions/get-stream-links.js';
+import { getMultipleStreamTapeLinks } from './functions/get-stream-links.js';
 import { getMultipleDownloadLinks } from './functions/get-download-links.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,15 +24,19 @@ let animeEpisodes: string[] = [
     .use(StealthPlugin())
     .launch({ headless: false });
 
-  const streamTapeLinks = await getMultipleSteamTapeLinks(
+  const streamTapeLinks = await getMultipleStreamTapeLinks(
     browser,
     animeEpisodes
   );
+
   const downloadLinks = await getMultipleDownloadLinks(
     browser,
     streamTapeLinks
   );
+
   browser.close();
+
   let saveFolder = join(__dirname, '..', 'downloads');
+
   await downloadMultipleVideos(downloadLinks, saveFolder);
 })();
