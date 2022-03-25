@@ -1,9 +1,9 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { dirname, join, basename } from 'path';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
-import { downloadVideos } from './functions/download-function.js';
+import { downloadMultipleVideos } from './functions/download-videos.js';
 import { getMultipleSteamTapeLinks } from './functions/get-stream-links.js';
 import { getMultipleDownloadLinks } from './functions/get-download-links.js';
 
@@ -12,11 +12,11 @@ const __dirname = dirname(__filename);
 
 let animeEpisodes: string[] = [
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
-
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/-episode19',
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-20',
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-21',
-  'https://anicloud.io/anime/stream/toradora/staffel-1/episode-22',
+  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-22',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
 ];
 
 (async () => {
@@ -34,11 +34,5 @@ let animeEpisodes: string[] = [
   );
   browser.close();
   let saveFolder = join(__dirname, '..', 'downloads');
-  for (const link of downloadLinks) {
-    let fileName = basename(link);
-    let pathToFile = join(saveFolder, fileName);
-    await downloadVideos(link, pathToFile, () => {
-      console.log(`successfully downloaded video ${fileName}`);
-    });
-  }
+  await downloadMultipleVideos(downloadLinks, saveFolder);
 })();
