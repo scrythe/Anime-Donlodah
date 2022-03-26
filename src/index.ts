@@ -3,9 +3,9 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
-import { downloadMultipleVideos } from './functions/download-videos.js';
-import { getMultipleStreamTapeLinks } from './functions/get-stream-links.js';
+import { getRedirectUrlGen } from './functions/get-stream-links.js';
 import { getMultipleDownloadLinks } from './functions/get-download-links.js';
+import { downloadMultipleVideos } from './functions/download-videos.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -17,6 +17,12 @@ let animeEpisodes: string[] = [
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-21',
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-22',
   'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-800',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
 ];
 
 (async () => {
@@ -24,10 +30,7 @@ let animeEpisodes: string[] = [
     .use(StealthPlugin())
     .launch({ headless: false });
 
-  const streamTapeLinks = await getMultipleStreamTapeLinks(
-    browser,
-    animeEpisodes
-  );
+  const streamTapeLinks = await getRedirectUrlGen(browser, animeEpisodes);
 
   const downloadLinks = await getMultipleDownloadLinks(
     browser,

@@ -55,7 +55,33 @@ function getStreamTapeLink(browser: Browser, link: string): Promise<string> {
   });
 }
 
-export function getMultipleStreamTapeLinks(
+function* getRedirectUrlGenerator(
+  browser: Browser,
+  links: string[]
+): Generator<Promise<string>> {
+  for (let i = 0; i < links.length; i++) {
+    const link = links[i];
+    yield getStreamTapeLink(browser, link);
+  }
+}
+
+export function getRedirectUrlGen(
+  browser: Browser,
+  links: string[]
+): Promise<string[]> {
+  return new Promise(async (resolve) => {
+    const redirectUrlObject = getRedirectUrlGenerator(browser, links);
+    const allLinks: string[] = new Array();
+    for (const link of redirectUrlObject) {
+      const streamTapeLink = await link.catch((error) => console.error(error));
+      if (!streamTapeLink) continue;
+      allLinks.push(streamTapeLink);
+    }
+    resolve(allLinks);
+  });
+}
+
+/* export function getMultipleStreamTapeLinks(
   browser: Browser,
   links: string[]
 ): Promise<string[]> {
@@ -71,4 +97,4 @@ export function getMultipleStreamTapeLinks(
     });
     resolve(downloadLinks);
   });
-}
+} */
