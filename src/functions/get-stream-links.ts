@@ -55,7 +55,7 @@ function getStreamTapeLink(browser: Browser, link: string): Promise<string> {
   });
 }
 
-function* getRedirectUrlGenerator(
+function* getStreamTapeLinkGenerator(
   browser: Browser,
   links: string[]
 ): Generator<Promise<string>> {
@@ -65,19 +65,40 @@ function* getRedirectUrlGenerator(
   }
 }
 
-export function getRedirectUrlGen(
-  browser: Browser,
-  links: string[]
+function getStreamTapeLinksChunk(
+  redirectUrlObject: Generator<Promise<string>>
 ): Promise<string[]> {
   return new Promise(async (resolve) => {
-    const redirectUrlObject = getRedirectUrlGenerator(browser, links);
-    const allLinks: string[] = new Array();
+    const streamTapeMultipleLinksChunk: string[] = new Array();
     for (const link of redirectUrlObject) {
       const streamTapeLink = await link.catch((error) => console.error(error));
       if (!streamTapeLink) continue;
-      allLinks.push(streamTapeLink);
+      streamTapeMultipleLinksChunk.push(streamTapeLink);
     }
-    resolve(allLinks);
+    resolve(streamTapeMultipleLinksChunk);
+  });
+}
+
+export function getMultipleStreamTapeLinks(
+  browser: Browser,
+  episodeLinks: Array<string[]>,
+  instanceLimit: number
+): Promise<string[]> {
+  return new Promise(async (resolve) => {
+    const streamTapeMultipleLinks: string[] = new Array();
+    for (let index = 0; index < instanceLimit; index++) {
+      const episodeLinksChunk = episodeLinks[index];
+      const redirectUrlObject = getStreamTapeLinkGenerator(
+        browser,
+        episodeLinksChunk
+      );
+      const streamTapeLinksChunk = await getStreamTapeLinksChunk(
+        redirectUrlObject
+      );
+
+      streamTapeMultipleLinks.push(...streamTapeLinksChunk);
+    }
+    resolve(streamTapeMultipleLinks);
   });
 }
 

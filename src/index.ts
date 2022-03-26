@@ -3,7 +3,7 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
-import { getRedirectUrlGen } from './functions/get-stream-links.js';
+import { getMultipleStreamTapeLinks } from './functions/get-stream-links.js';
 import { getMultipleDownloadLinks } from './functions/get-download-links.js';
 import { downloadMultipleVideos } from './functions/download-videos.js';
 
@@ -25,32 +25,22 @@ let animeEpisodes: string[] = [
   'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
 ];
 
-const testArray: string[] = [
-  '1',
-  '2',
-  '3',
-  '4',
-  '5',
-  '6',
-  '7',
-  '8',
-  '9',
-  '10',
-  '11',
-  '12',
-  '13',
-  '14',
-  '15',
-  '16',
-];
-
 (async () => {
   const browser = await puppeteer
     .use(StealthPlugin())
     .launch({ headless: false });
 
-  const streamTapeLinks = await getRedirectUrlGen(browser, animeEpisodes);
+  const instanceLimit = 5;
+  const animeEpisodesChunks = getSplittedLinkArray(
+    animeEpisodes,
+    instanceLimit
+  );
 
+  const streamTapeLinks = await getMultipleStreamTapeLinks(
+    browser,
+    animeEpisodesChunks,
+    instanceLimit
+  );
   const downloadLinks = await getMultipleDownloadLinks(
     browser,
     streamTapeLinks
@@ -59,39 +49,22 @@ const testArray: string[] = [
   browser.close();
 
   let saveFolder = join(__dirname, '..', 'downloads');
-
   await downloadMultipleVideos(downloadLinks, saveFolder);
 })();
 
-/* (async () => {
-  const newArray = loopOverArray(testArray, 5);
-  console.log(newArray);
-})();
-
-function splitArray(links: string[], instanceLimit: number): string[] {
-  const newArray: string[] = new Array();
-  for (let index = 0; index < links.length; index += instanceLimit) {
-    const link = links[index];
-    newArray.push(link);
-  }
-  return newArray;
-}
-
-function loopOverArray(links: string[], instanceLimit: number) {
-  // let test: string[] = ['42', '42'];
-  // let test2: string[][] = [test, test];
-  const totalArray: Array<string[]> = new Array();
+function getSplittedLinkArray(links: string[], instanceLimit: number) {
+  const splittedLinkArray: Array<string[]> = new Array();
   for (let index = 0; index < instanceLimit; index++) {
-    const newArray: string[] = new Array();
+    const chunkOfLinks: string[] = new Array();
     for (
-      let linkIndex = index;
-      linkIndex < links.length;
-      linkIndex += instanceLimit
+      let chunkIndex = index;
+      chunkIndex < links.length;
+      chunkIndex += instanceLimit
     ) {
-      const link = links[linkIndex];
-      newArray.push(link);
+      const link = links[chunkIndex];
+      chunkOfLinks.push(link);
     }
-    totalArray.push(newArray);
+    splittedLinkArray.push(chunkOfLinks);
   }
-  return totalArray;
-} */
+  return splittedLinkArray;
+}
