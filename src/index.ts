@@ -25,6 +25,25 @@ let animeEpisodes: string[] = [
   'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
 ];
 
+const testArray: string[] = [
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+  '10',
+  '11',
+  '12',
+  '13',
+  '14',
+  '15',
+  '16',
+];
+
 (async () => {
   const browser = await puppeteer
     .use(StealthPlugin())
@@ -43,3 +62,36 @@ let animeEpisodes: string[] = [
 
   await downloadMultipleVideos(downloadLinks, saveFolder);
 })();
+
+/* (async () => {
+  const newArray = loopOverArray(testArray, 5);
+  console.log(newArray);
+})();
+
+function splitArray(links: string[], instanceLimit: number): string[] {
+  const newArray: string[] = new Array();
+  for (let index = 0; index < links.length; index += instanceLimit) {
+    const link = links[index];
+    newArray.push(link);
+  }
+  return newArray;
+}
+
+function loopOverArray(links: string[], instanceLimit: number) {
+  // let test: string[] = ['42', '42'];
+  // let test2: string[][] = [test, test];
+  const totalArray: Array<string[]> = new Array();
+  for (let index = 0; index < instanceLimit; index++) {
+    const newArray: string[] = new Array();
+    for (
+      let linkIndex = index;
+      linkIndex < links.length;
+      linkIndex += instanceLimit
+    ) {
+      const link = links[linkIndex];
+      newArray.push(link);
+    }
+    totalArray.push(newArray);
+  }
+  return totalArray;
+} */
