@@ -1,4 +1,3 @@
-import { Browser } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { dirname, basename, join } from 'path';
@@ -8,8 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 import { getMultipleStreamTapeLinks } from './functions/get-stream-links.js';
-import { getDownloadLink } from './functions/get-download-links.js';
 import { downloadVideo } from './functions/download-videos.js';
+import { getDownloadLinkGenerator } from './functions/functions.js';
 
 let animeEpisodes: string[] = [
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
@@ -69,13 +68,3 @@ let animeEpisodes: string[] = [
 
   browser.close();
 })();
-
-function* getDownloadLinkGenerator(
-  MultipleStreamTapeLinks: string[],
-  browser: Browser
-) {
-  for (let index = 0; index < MultipleStreamTapeLinks.length; index++) {
-    const streamTapeLink = MultipleStreamTapeLinks[index];
-    yield getDownloadLink(browser, streamTapeLink);
-  }
-}
