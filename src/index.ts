@@ -1,14 +1,11 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { join } from 'path';
 
 import { getMultipleStreamTapeLinks } from './functions/get-stream-links.js';
 import { getMultipleDownloadLinks } from './functions/get-download-links.js';
 import { downloadMultipleVideos } from './functions/download-videos.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { __dirname } from './functions/functions.js';
 
 let animeEpisodes: string[] = [
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
@@ -41,14 +38,10 @@ let animeEpisodes: string[] = [
     .use(StealthPlugin())
     .launch({ headless: false });
 
-  const instanceLimit = 3;
-  const animeEpisodesChunks = getSplittedLinkArray(
-    animeEpisodes,
-    instanceLimit
-  );
-
+  const instanceLimit = 82;
   const streamTapeLinks = await getMultipleStreamTapeLinks(
-    animeEpisodesChunks,
+    animeEpisodes,
+    instanceLimit,
     browser
   );
   const downloadLinks = await getMultipleDownloadLinks(
@@ -61,20 +54,3 @@ let animeEpisodes: string[] = [
   let saveFolder = join(__dirname, '..', 'downloads');
   await downloadMultipleVideos(downloadLinks, saveFolder);
 })();
-
-function getSplittedLinkArray(links: string[], instanceLimit: number) {
-  const splittedLinkArray: Array<string[]> = new Array();
-  for (let index = 0; index < instanceLimit; index++) {
-    const chunkOfLinks: string[] = new Array();
-    for (
-      let chunkIndex = index;
-      chunkIndex < links.length;
-      chunkIndex += instanceLimit
-    ) {
-      const link = links[chunkIndex];
-      chunkOfLinks.push(link);
-    }
-    splittedLinkArray.push(chunkOfLinks);
-  }
-  return splittedLinkArray;
-}

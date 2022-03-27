@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import { Browser } from 'puppeteer';
+import { getSplittedLinkArray } from './functions.js';
 
 function getRedirectUrl(url: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
@@ -79,36 +80,17 @@ function getStreamTapeLinksChunk(
   });
 }
 
-/* export function getMultipleStreamTapeLinks(
-  episodeLinks: Array<string[]>,
-  browser: Browser
-): Promise<string[]> {
-  return new Promise(async (resolve) => {
-    const streamTapeMultipleLinks: string[] = new Array();
-    for (let index = 0; index < episodeLinks.length; index++) {
-      const chunkOfEpisodes = episodeLinks[0];
-      const redirectUrlObject = getStreamTapeLinkGenerator(
-        browser,
-        chunkOfEpisodes
-      );
-      for (const link of redirectUrlObject) {
-        const streamTapeLink = await link.catch((error) =>
-          console.error(error)
-        );
-        if (!streamTapeLink) continue;
-        streamTapeMultipleLinks.push(streamTapeLink);
-      }
-    }
-    resolve(streamTapeMultipleLinks);
-  });
-} */
-
 export function getMultipleStreamTapeLinks(
-  episodeLinks: Array<string[]>,
+  episodeLinks: string[],
+  instanceLimit: number,
   browser: Browser
 ): Promise<string[]> {
   return new Promise(async (resolve) => {
-    const chunksOfstreamTapeMultipleLinksPromises = episodeLinks.map(
+    const animeEpisodesChunks = getSplittedLinkArray(
+      episodeLinks,
+      instanceLimit
+    );
+    const chunksOfstreamTapeMultipleLinksPromises = animeEpisodesChunks.map(
       (chunkOfEpisodes) => {
         const redirectUrlObject = getStreamTapeLinkGenerator(
           browser,
@@ -129,21 +111,3 @@ export function getMultipleStreamTapeLinks(
     resolve(streamTapeMultipleLinks);
   });
 }
-
-/* export function getMultipleStreamTapeLinks(
-  browser: Browser,
-  links: string[]
-): Promise<string[]> {
-  return new Promise(async (resolve) => {
-    const downloadLinksPromises = links.map((link) => {
-      return getStreamTapeLink(browser, link).catch((error) =>
-        console.error(error)
-      );
-    });
-    const downloadLinksResolved = await Promise.all(downloadLinksPromises);
-    const downloadLinks = downloadLinksResolved.filter((url): url is string => {
-      return !!url;
-    });
-    resolve(downloadLinks);
-  });
-} */
