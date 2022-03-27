@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/scrythe/AnimeHut/compare/v2.1.0...v2.2.0) (2022-03-27)
+
+
+### Features
+
+* get multiple links with limit ([2c67643](https://github.com/scrythe/AnimeHut/commit/2c67643760c2c34424d2f352138036091c4cb52e))
+* get streaming link one by one ([23de663](https://github.com/scrythe/AnimeHut/commit/23de6636a59b3a484162f48e1d56cf6c865adba5))
+
+
+### Bug Fixes
+
+* clean code and add error handeling ([3b8e0ed](https://github.com/scrythe/AnimeHut/commit/3b8e0edfe511cc632d2f240251b88791d4714aea))
+* doesn't get too many download links at once ([1d49466](https://github.com/scrythe/AnimeHut/commit/1d49466e8299baa82c354179f3b8c5f350b9712b))
+
 ## [2.1.0](https://github.com/scrythe/AnimeHut/compare/v2.0.0...v2.1.0) (2022-03-12)
 
 
