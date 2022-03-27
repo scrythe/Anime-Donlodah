@@ -2,7 +2,7 @@ import { createWriteStream, unlink } from 'fs';
 import { get } from 'https';
 import { basename, join } from 'path';
 
-function downloadVideo(
+export function downloadVideo(
   link: string,
   pathToFile: string,
   callback: () => void
@@ -49,7 +49,7 @@ function downloadVideo(
   });
 } */
 
-export function downloadMultipleVideos(
+/* export function downloadMultipleVideos(
   downloadLinks: string[],
   saveFolder: string
 ): Promise<void> {
@@ -63,4 +63,4 @@ export function downloadMultipleVideos(
     }
     resolve();
   });
-}
+} */

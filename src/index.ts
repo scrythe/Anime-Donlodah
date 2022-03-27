@@ -1,11 +1,15 @@
+import { Browser } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { join } from 'path';
+import { dirname, basename, join } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 import { getMultipleStreamTapeLinks } from './functions/get-stream-links.js';
-import { getMultipleDownloadLinks } from './functions/get-download-links.js';
-import { downloadMultipleVideos } from './functions/download-videos.js';
-import { __dirname } from './functions/functions.js';
+import { getDownloadLink } from './functions/get-download-links.js';
+import { downloadVideo } from './functions/download-videos.js';
 
 let animeEpisodes: string[] = [
   // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
@@ -38,19 +42,40 @@ let animeEpisodes: string[] = [
     .use(StealthPlugin())
     .launch({ headless: false });
 
-  const instanceLimit = 82;
+  const instanceLimit = 4;
   const streamTapeLinks = await getMultipleStreamTapeLinks(
     animeEpisodes,
     instanceLimit,
     browser
   );
-  const downloadLinks = await getMultipleDownloadLinks(
-    browser,
-    streamTapeLinks
+
+  const getDownloadLinkObject = getDownloadLinkGenerator(
+    streamTapeLinks,
+    browser
   );
+  const saveFolder = join(__dirname, '..', 'downloads');
+
+  for (const downloadLinkPromise of getDownloadLinkObject) {
+    const downloadLink = await downloadLinkPromise.catch((error) =>
+      console.error(error)
+    );
+    if (!downloadLink) return;
+    const fileName = basename(downloadLink);
+    const pathToFile = join(saveFolder, fileName);
+    await downloadVideo(downloadLink, pathToFile, () => {
+      console.log(`successfully downloaded video ${fileName}`);
+    }).catch((error) => console.error(error));
+  }
 
   browser.close();
-
-  let saveFolder = join(__dirname, '..', 'downloads');
-  await downloadMultipleVideos(downloadLinks, saveFolder);
 })();
+
+function* getDownloadLinkGenerator(
+  MultipleStreamTapeLinks: string[],
+  browser: Browser
+) {
+  for (let index = 0; index < MultipleStreamTapeLinks.length; index++) {
+    const streamTapeLink = MultipleStreamTapeLinks[index];
+    yield getDownloadLink(browser, streamTapeLink);
+  }
+}

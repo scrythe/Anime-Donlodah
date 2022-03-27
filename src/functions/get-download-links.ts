@@ -56,7 +56,10 @@ function getRedirectedLink(browser: Browser, link: string): Promise<string> {
   });
 }
 
-function getDownloadLink(browser: Browser, url: string): Promise<string> {
+export function getDownloadLink(
+  browser: Browser,
+  url: string
+): Promise<string> {
   return new Promise(async (resolve, reject) => {
     const scriptCode = await getDownloadLinkScript(url).catch((error) =>
       reject(error)
@@ -72,25 +75,5 @@ function getDownloadLink(browser: Browser, url: string): Promise<string> {
     );
     if (!redirectedLink) return;
     resolve(redirectedLink);
-  });
-}
-
-export function getMultipleDownloadLinks(
-  browser: Browser,
-  urls: string[]
-): Promise<string[]> {
-  return new Promise(async (resolve) => {
-    const downloadLinksPromises = urls.map((url) => {
-      return getDownloadLink(browser, url).catch((error) =>
-        console.error(error)
-      );
-    });
-    const downloadLinksResolved = await Promise.all(downloadLinksPromises);
-    const downloadLinks = downloadLinksResolved.filter(
-      (link): link is string => {
-        return !!link;
-      }
-    );
-    resolve(downloadLinks);
   });
 }
