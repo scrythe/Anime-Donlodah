@@ -23,6 +23,17 @@ let animeEpisodes: string[] = [
   'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
   'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
   'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
+  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
 ];
 
 (async () => {
@@ -30,16 +41,15 @@ let animeEpisodes: string[] = [
     .use(StealthPlugin())
     .launch({ headless: false });
 
-  const instanceLimit = 5;
+  const instanceLimit = 3;
   const animeEpisodesChunks = getSplittedLinkArray(
     animeEpisodes,
     instanceLimit
   );
 
   const streamTapeLinks = await getMultipleStreamTapeLinks(
-    browser,
     animeEpisodesChunks,
-    instanceLimit
+    browser
   );
   const downloadLinks = await getMultipleDownloadLinks(
     browser,

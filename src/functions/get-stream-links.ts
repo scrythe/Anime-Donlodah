@@ -79,25 +79,53 @@ function getStreamTapeLinksChunk(
   });
 }
 
-export function getMultipleStreamTapeLinks(
-  browser: Browser,
+/* export function getMultipleStreamTapeLinks(
   episodeLinks: Array<string[]>,
-  instanceLimit: number
+  browser: Browser
 ): Promise<string[]> {
   return new Promise(async (resolve) => {
     const streamTapeMultipleLinks: string[] = new Array();
-    for (let index = 0; index < instanceLimit; index++) {
-      const episodeLinksChunk = episodeLinks[index];
+    for (let index = 0; index < episodeLinks.length; index++) {
+      const chunkOfEpisodes = episodeLinks[0];
       const redirectUrlObject = getStreamTapeLinkGenerator(
         browser,
-        episodeLinksChunk
+        chunkOfEpisodes
       );
-      const streamTapeLinksChunk = await getStreamTapeLinksChunk(
-        redirectUrlObject
-      );
-
-      streamTapeMultipleLinks.push(...streamTapeLinksChunk);
+      for (const link of redirectUrlObject) {
+        const streamTapeLink = await link.catch((error) =>
+          console.error(error)
+        );
+        if (!streamTapeLink) continue;
+        streamTapeMultipleLinks.push(streamTapeLink);
+      }
     }
+    resolve(streamTapeMultipleLinks);
+  });
+} */
+
+export function getMultipleStreamTapeLinks(
+  episodeLinks: Array<string[]>,
+  browser: Browser
+): Promise<string[]> {
+  return new Promise(async (resolve) => {
+    const chunksOfstreamTapeMultipleLinksPromises = episodeLinks.map(
+      (chunkOfEpisodes) => {
+        const redirectUrlObject = getStreamTapeLinkGenerator(
+          browser,
+          chunkOfEpisodes
+        );
+        const streamTapeLinksChunk = getStreamTapeLinksChunk(redirectUrlObject);
+        return streamTapeLinksChunk;
+      }
+    );
+    const chunksOfstreamTapeMultipleLinks = await Promise.all(
+      chunksOfstreamTapeMultipleLinksPromises
+    );
+    const streamTapeMultipleLinks = chunksOfstreamTapeMultipleLinks.reduce(
+      (allLinks, chunksOfLinks) => {
+        return allLinks.concat(chunksOfLinks);
+      }
+    );
     resolve(streamTapeMultipleLinks);
   });
 }
