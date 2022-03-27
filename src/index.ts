@@ -3,40 +3,20 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { dirname, basename, join } from 'path';
 import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+import { getEpisodes } from './functions/get-episode-list.js';
 import { getMultipleStreamTapeLinks } from './functions/get-stream-links.js';
 import { downloadVideo } from './functions/download-videos.js';
 import { getDownloadLinkGenerator } from './functions/functions.js';
 
-let animeEpisodes: string[] = [
-  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-8',
-  // 'https://anicloud.io/anime/stream/toradora/staffel-1/-episode19',
-  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-20',
-  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-21',
-  // 'https://anicloud.io/anime/stream/toradora/staffel-1/episode-22',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-800',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-  'https://anicloud.io/anime/stream/jujutsu-kaisen/staffel-1/episode-8',
-];
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 (async () => {
+  const animeEpisodes = await getEpisodes().catch((error) =>
+    console.error(error)
+  );
+  if (!animeEpisodes) return;
+
   const browser = await puppeteer
     .use(StealthPlugin())
     .launch({ headless: false });
