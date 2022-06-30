@@ -1,5 +1,5 @@
 import { Browser } from 'puppeteer';
-import { getDownloadLink } from './get-download-links.js';
+import { getDownloadLink } from './get-download-links';
 
 export function getSplittedLinkArray(
   links: string[],

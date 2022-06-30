@@ -1,15 +1,11 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { dirname, basename, join } from 'path';
-import { fileURLToPath } from 'url';
+import { basename, join } from 'path';
 
-import { getEpisodes } from './functions/get-episode-list.js';
-import { getMultipleStreamTapeLinks } from './functions/get-stream-links.js';
-import { downloadVideo } from './functions/download-videos.js';
-import { getDownloadLinkGenerator } from './functions/functions.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+import { getEpisodes } from './functions/get-episode-list';
+import { getMultipleStreamTapeLinks } from './functions/get-stream-links';
+import { downloadVideo } from './functions/download-videos';
+import { getDownloadLinkGenerator } from './functions/functions';
 
 (async () => {
   const animeEpisodes = await getEpisodes().catch((error) =>

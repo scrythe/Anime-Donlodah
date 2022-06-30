@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import { Browser } from 'puppeteer';
-import { getSplittedLinkArray } from './functions.js';
+import { getSplittedLinkArray } from './functions';
 
 function getRedirectUrl(url: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
