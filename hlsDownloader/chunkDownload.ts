@@ -28,11 +28,17 @@ async function downloadSegment(uri: string, segmentsDir: string) {
   });
 }
 
-async function chunkDownload(streamLink: string, segmentsDir: string) {
+async function chunkDownload(
+  streamLink: string,
+  segmentsDir: string
+): Promise<void> {
   const playlist = await getPlaylist(streamLink);
   const segments = getSegments(playlist, streamLink);
   const queue = new PQueue({ concurrency: 5 });
   segments.forEach((uri) => queue.add(() => downloadSegment(uri, segmentsDir)));
+  return new Promise((resolve) => {
+    queue.onIdle().then(() => resolve());
+  });
 }
 
 export default chunkDownload;
