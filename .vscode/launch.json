@@ -15,6 +15,18 @@
 
       "program": "${workspaceFolder}\\src\\index.ts",
       "sourceMaps": true
+    },
+    {
+      "name": "Launch HLS Downloader",
+      "type": "pwa-node",
+      "request": "launch",
+
+      "args": ["${relativeFile}"],
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
+      "skipFiles": ["<node_internals>/**"],
+
+      "program": "${workspaceFolder}\\hlsDownloader\\index.ts",
+      "sourceMaps": true
     }
   ]
 }
