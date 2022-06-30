@@ -1,16 +1,27 @@
-import { exec } from 'child_process';
-import { writeFileSync } from 'fs';
+import { createWriteStream, createReadStream, WriteStream } from 'fs';
 
-export function mergeFiles(files: string[], outputFilePath: string) {
-  const segmentsFile = 'ffmpeg-input.txt';
-  const filePathList = files.map((file) => `file '${file}'\n`).join('');
-  writeFileSync(segmentsFile, filePathList);
+function copyToStream(file: string, outStream: WriteStream) {
+  const rs = createReadStream(file);
+  rs.pipe(outStream, { end: false });
+  return new Promise((resolve, reject) => {
+    rs.on('end', resolve);
+    rs.on('error', reject);
+  });
+}
 
-  exec(
-    `ffmpeg -f concat -safe 0 -i "${segmentsFile}" -c copy "${outputFilePath}"`,
-    (error) => {
-      if (error) console.log(error);
-      else console.log('download finished');
-    }
-  );
+export async function mergeFiles(
+  files: string[],
+  outputFile: string
+): Promise<void> {
+  const outStream = createWriteStream(outputFile);
+  for (let index = 0; index < files.length; index++) {
+    const file = files[index];
+    if (!file) continue;
+    await copyToStream(file, outStream);
+  }
+  outStream.end();
+  return new Promise((resolve, reject) => {
+    outStream.on('finish', resolve);
+    outStream.on('error', reject);
+  });
 }
