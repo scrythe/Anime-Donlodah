@@ -1,4 +1,5 @@
 import { createWriteStream, createReadStream, WriteStream } from 'fs';
+import { spawn } from 'child_process';
 
 function copyToStream(file: string, outStream: WriteStream) {
   const rs = createReadStream(file);
@@ -23,5 +24,34 @@ export async function mergeFiles(
   return new Promise((resolve, reject) => {
     outStream.on('finish', resolve);
     outStream.on('error', reject);
+  });
+}
+
+export async function convertToMp4(
+  inputFile: string,
+  outputFile: string
+): Promise<void> {
+  const args = [
+    '-i',
+    inputFile,
+    '-c:v',
+    'libx264',
+    '-crf',
+    '0',
+    '-c:a',
+    'copy',
+    outputFile,
+  ];
+  const ffmpeg = spawn('ffmpeg', args);
+  return new Promise((resolve, reject) => {
+    ffmpeg.on('error', (error) => {
+      console.error(error);
+      return reject();
+    });
+    ffmpeg.on('close', (status) => {
+      if (status == 0) return resolve();
+      console.error(status);
+      return reject();
+    });
   });
 }
