@@ -7,7 +7,6 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "serve": "nodemon ./src/index.ts",
-    "serve:hls": "nodemon ./hlsDownloader/index.ts",
     "release": "standard-version"
   },
   "repository": {
