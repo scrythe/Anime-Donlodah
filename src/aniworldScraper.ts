@@ -23,7 +23,9 @@ function getLinkToVoe(browser: Browser, redirectLink: string): Promise<string> {
     const page = await browser.newPage();
     await page.goto(redirectLink);
     await page.waitForNavigation();
-    resolve(page.url());
+    const pageUrl = page.url();
+    page.close();
+    resolve(pageUrl);
     // const pageUrl = new URL(page.url());
     // if (pageUrl.hostname == 'voeun-block.net')
   });
