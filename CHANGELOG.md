@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/scrythe/AnimeHut/compare/v2.2.0...v3.0.0) (2022-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* download video
+
+### Features
+
+* combine ts files with node js ([99c53e7](https://github.com/scrythe/AnimeHut/commit/99c53e74c53c4d7bbbab5c734a6817c1b342e94d))
+* convert file to mp4 (not finished) ([1c120f2](https://github.com/scrythe/AnimeHut/commit/1c120f224c4baa10ed4b6ecf7dc6234f53e7c375))
+* download all segments of stream ([30d8ded](https://github.com/scrythe/AnimeHut/commit/30d8ded54574aa908ac716f185423e49f6b3aa0b))
+* download multiple episodes ([1818c9f](https://github.com/scrythe/AnimeHut/commit/1818c9f143a2408ee6d965b28741bbf881e57316))
+* download video ([ea4d90b](https://github.com/scrythe/AnimeHut/commit/ea4d90b47d80f985ccc24a1265090e0f1ea81da2))
+* get m3u8 link ([eaa781b](https://github.com/scrythe/AnimeHut/commit/eaa781bfdfc9aedb032413738e9f8ba213b16c7b))
+* get voe link ([6cbe27b](https://github.com/scrythe/AnimeHut/commit/6cbe27b91181c0993046cb4e58becfb289785dbe))
+* limit request amount to 5 ([4bd82e6](https://github.com/scrythe/AnimeHut/commit/4bd82e620f32bd666050cb43b725e804ea8b6a9b))
+* merge all ts files in one ts file ([8e8821a](https://github.com/scrythe/AnimeHut/commit/8e8821ae26ced130919e0c798693ec703a613621))
+* reduce recaptcha amounts ([62e9295](https://github.com/scrythe/AnimeHut/commit/62e9295ec51d934e0dbefb79cd654138c713bfb3))
+* use node-hls-downloader instead of own ([6989718](https://github.com/scrythe/AnimeHut/commit/6989718d335e66576c1370031195892e0aa41670))
+
 ## [2.2.0](https://github.com/scrythe/AnimeHut/compare/v2.1.0...v2.2.0) (2022-03-27)
 
 
