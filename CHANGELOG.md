@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/scrythe/AnimeHut/compare/v3.0.0...v4.0.0) (2022-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* download selected episodes
+
+### Features
+
+* download selected episodes ([c090cb0](https://github.com/scrythe/AnimeHut/commit/c090cb0f4f4e60cc0b36010d2763f09ab0f52b05))
+* get all anime names with their urls ([68ca8b2](https://github.com/scrythe/AnimeHut/commit/68ca8b299084700b1217dd47f39de8e40f12dd56))
+* get all seasons and all episodes of seaon ([dd3690d](https://github.com/scrythe/AnimeHut/commit/dd3690d06a221b046e6b44c44c782ac9f49af737))
+* select all episodes between start and end ([0a582c9](https://github.com/scrythe/AnimeHut/commit/0a582c9107b48c643008b919f4462652bda29ac3))
+* select anime search input function ([a4a37ab](https://github.com/scrythe/AnimeHut/commit/a4a37aba19956599b437eaa064e7e32bcce1916b))
+* select episode of season ([89e26b6](https://github.com/scrythe/AnimeHut/commit/89e26b67d21f92f2405a94681f4a4e7e7f291d2d))
+
 ## [3.0.0](https://github.com/scrythe/AnimeHut/compare/v2.2.0...v3.0.0) (2022-07-03)
 
 
