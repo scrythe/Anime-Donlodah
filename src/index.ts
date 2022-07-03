@@ -1,5 +1,6 @@
 import episodes from './episode-list.json';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { getVoeLink } from './aniworldScraper';
 import { getM3u8Link } from './voeScraper';
 import { hlsDownload } from './utils';
@@ -10,7 +11,10 @@ interface Episode {
 }
 
 async function downloadVideos(episodes: Episode[]) {
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer
+    .use(StealthPlugin())
+    .launch({ headless: false });
+
   const voeLinkPromises = episodes.map((episode) =>
     getVoeLink(browser, episode.url)
   );

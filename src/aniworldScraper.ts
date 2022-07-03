@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { load } from 'cheerio';
 import { Browser } from 'puppeteer';
+import UserAgent from 'user-agents';
 
 function getRedirectVoeLink(episode: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
@@ -22,6 +23,8 @@ function getLinkToVoe(browser: Browser, redirectLink: string): Promise<string> {
   return new Promise(async (resolve) => {
     const page = await browser.newPage();
     await page.goto(redirectLink);
+    const userAgent = new UserAgent();
+    await page.setUserAgent(userAgent.toString());
     await page.waitForNavigation();
     const pageUrl = page.url();
     page.close();
