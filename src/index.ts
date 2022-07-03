@@ -1,5 +1,6 @@
 import { prompt } from 'enquirer';
 import animeList from './anime-list.json';
+import { getAllEpisodesOfSeason, getAllSeasons } from './animeScraper';
 
 const animeListNames = animeList.map((animeEl) => animeEl.name);
 
@@ -26,4 +27,18 @@ async function main() {
   console.log(animeUrl);
 }
 
+async function season() {
+  const url = 'https://aniworld.to/anime/stream/hunter-x-hunter';
+  const seasons = await getAllSeasons(url);
+  console.log(seasons);
+}
+
+async function episodes() {
+  const url = 'https://aniworld.to/anime/stream/hunter-x-hunter/staffel-1';
+  const episodes = await getAllEpisodesOfSeason(url);
+  console.log(episodes);
+}
+
 main;
+season;
+episodes;
