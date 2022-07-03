@@ -2,6 +2,8 @@ import axios from 'axios';
 import { load } from 'cheerio';
 import { Browser } from 'puppeteer';
 import UserAgent from 'user-agents';
+import PQueue from 'p-queue';
+import { Episode } from './interfaces';
 
 function getRedirectVoeLink(episode: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
@@ -34,7 +36,7 @@ function getLinkToVoe(browser: Browser, redirectLink: string): Promise<string> {
   });
 }
 
-export function getVoeLink(browser: Browser, episode: string): Promise<string> {
+function getVoeLink(browser: Browser, episode: string): Promise<string> {
   return new Promise(async (resolve, reject) => {
     const redirectLink = await getRedirectVoeLink(episode).catch((error) =>
       reject(error)
@@ -43,4 +45,14 @@ export function getVoeLink(browser: Browser, episode: string): Promise<string> {
     const voeLink = getLinkToVoe(browser, redirectLink);
     resolve(voeLink);
   });
+}
+
+export async function getAllVoeLinks(browser: Browser, episodes: Episode[]) {
+  const pqueueOptions = { concurrency: 5 };
+  const queue = new PQueue(pqueueOptions);
+  const voeLinkPromises = episodes.map(
+    (episode) => () => getVoeLink(browser, episode.url)
+  );
+  const voeLinks = await queue.addAll(voeLinkPromises);
+  return voeLinks;
 }
