@@ -1,6 +1,7 @@
 import { prompt } from 'enquirer';
 import animeList from './anime-list.json';
-import { getAllEpisodesOfSeason, getAllSeasons } from './animeScraper';
+import { getAllEpisodes } from './animeScraper';
+import { AllEpisodes } from './interfaces';
 
 const animeListNames = animeList.map((animeEl) => animeEl.name);
 
@@ -10,35 +11,62 @@ function getAnimeUrl(animeName: string) {
   return anime.url;
 }
 
+function getEpisodesOfSeason(seasonName: string, seasons: AllEpisodes) {
+  const season = seasons.find((season) => season.name == seasonName);
+  if (!season) return;
+  return season.episodes;
+}
+
 interface AnimeListPrompt {
-  'anime-series': string;
+  selectedAnime: string;
+}
+
+interface SeasonPrompt {
+  selectedSeason: string;
+}
+
+interface EpisodePrompt {
+  selectedEpisode: string;
 }
 
 async function main() {
-  const { 'anime-series': animeSelected } = await prompt<AnimeListPrompt>({
+  const { selectedAnime } = await prompt<AnimeListPrompt>({
     type: 'autocomplete',
-    name: 'anime-series',
+    name: 'selectedAnime',
     message: 'Pick your Anime Serie',
     //@ts-ignore
     limit: 10,
     choices: animeListNames,
   });
-  const animeUrl = getAnimeUrl(animeSelected);
-  console.log(animeUrl);
+
+  const animeUrl = getAnimeUrl(selectedAnime);
+  if (!animeUrl) return;
+  const seasons = await getAllEpisodes(animeUrl);
+  const seasonNames = seasons.map((season) => season.name);
+
+  const { selectedSeason } = await prompt<SeasonPrompt>({
+    type: 'autocomplete',
+    name: 'selectedSeason',
+    message: 'Select Start and End of Episodes \n Select Start Season',
+    //@ts-ignore
+    limit: 10,
+    choices: seasonNames,
+  });
+
+  const episodesOfSeason = getEpisodesOfSeason(selectedSeason, seasons);
+  if (!episodesOfSeason) return;
+  const episodeNames = episodesOfSeason.map((episode) => episode.name);
+
+  const { selectedEpisode } = await prompt<EpisodePrompt>({
+    type: 'autocomplete',
+    name: 'selectedEpisode',
+    message: 'Select Start and End of Episodes \n Select Start Episode',
+    //@ts-ignore
+    limit: 10,
+    choices: episodeNames,
+  });
+
+  console.log(selectedEpisode);
 }
 
-async function season() {
-  const url = 'https://aniworld.to/anime/stream/hunter-x-hunter';
-  const seasons = await getAllSeasons(url);
-  console.log(seasons);
-}
-
-async function episodes() {
-  const url = 'https://aniworld.to/anime/stream/hunter-x-hunter/staffel-1';
-  const episodes = await getAllEpisodesOfSeason(url);
-  console.log(episodes);
-}
-
-main;
-season;
-episodes;
+main();
