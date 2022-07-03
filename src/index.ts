@@ -1,27 +1,29 @@
-import episodes from './episode-list.json';
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { getAllVoeLinks } from './aniworldScraper';
-import { getM3u8Link } from './voeScraper';
-import { hlsDownload } from './utils';
-import { Episode } from './interfaces';
+import { prompt } from 'enquirer';
+import animeList from './anime-list.json';
 
-async function downloadVideos(episodes: Episode[]) {
-  const browser = await puppeteer
-    .use(StealthPlugin())
-    .launch({ headless: false });
+const animeListNames = animeList.map((animeEl) => animeEl.name);
 
-  const voeLinks = await getAllVoeLinks(browser, episodes);
-
-  browser.close();
-
-  for (let index = 0; index < voeLinks.length; index++) {
-    const voeLink = voeLinks[index];
-    if (!voeLink) continue;
-    const m3u8Link = await getM3u8Link(voeLink);
-    const episodeName = episodes[index]?.name;
-    await hlsDownload(m3u8Link, `downloads/${episodeName}.mp4`);
-  }
+function getAnimeUrl(animeName: string) {
+  const anime = animeList.find((animeEl) => animeEl.name == animeName);
+  if (!anime) return;
+  return anime.url;
 }
 
-downloadVideos(episodes);
+interface AnimeListPrompt {
+  'anime-series': string;
+}
+
+async function main() {
+  const { 'anime-series': animeSelected } = await prompt<AnimeListPrompt>({
+    type: 'autocomplete',
+    name: 'anime-series',
+    message: 'Pick your Anime Serie',
+    //@ts-ignore
+    limit: 10,
+    choices: animeListNames,
+  });
+  const animeUrl = getAnimeUrl(animeSelected);
+  console.log(animeUrl);
+}
+
+main;
