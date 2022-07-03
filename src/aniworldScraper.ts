@@ -23,16 +23,14 @@ function getRedirectVoeLink(episode: string): Promise<string> {
 
 function getLinkToVoe(browser: Browser, redirectLink: string): Promise<string> {
   return new Promise(async (resolve) => {
-    const page = await browser.newPage();
-    await page.goto(redirectLink);
     const userAgent = new UserAgent();
+    const page = await browser.newPage();
     await page.setUserAgent(userAgent.toString());
+    await page.goto(redirectLink);
     await page.waitForNavigation();
     const pageUrl = page.url();
     page.close();
     resolve(pageUrl);
-    // const pageUrl = new URL(page.url());
-    // if (pageUrl.hostname == 'voeun-block.net')
   });
 }
 
