@@ -1,6 +1,9 @@
+#!/usr/bin/env node
+
 import { prompt } from 'enquirer';
 import animeList from './anime-list.json';
 import { getAllEpisodes } from './animeScraper';
+import downloadVideos from './aniworldDownloader';
 import { AllEpisodes, Episode } from './interfaces';
 
 const animeListNames = animeList.map((animeEl) => animeEl.name);
@@ -109,24 +112,9 @@ async function main() {
     episodeEnd,
     allEpisodes
   );
+  if (!selectedEpisodes) return;
 
-  console.log(selectedEpisodes);
-}
-
-async function selectedEpisodesTest() {
-  const animeUrl = getAnimeUrl('Hunter x Hunter');
-  if (!animeUrl) return;
-  const seasons = await getAllEpisodes(animeUrl);
-  const episodeStart = 'Departure x And x Friends [Episode 001]';
-  const episodeEnd = 'Strengthen x And x Threaten [Episode 064]';
-  const allEpisodes = seasons.map((season) => season.episodes).flat();
-  const selectedEpisodes = selectEpisodesBetween(
-    episodeStart,
-    episodeEnd,
-    allEpisodes
-  );
-  console.log(selectedEpisodes);
+  downloadVideos(selectedEpisodes);
 }
 
 main();
-selectedEpisodesTest;

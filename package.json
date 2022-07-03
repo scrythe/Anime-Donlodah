@@ -11,6 +11,9 @@
     "write-anime-list": "ts-node ./src/writeAnimeList.ts",
     "release": "standard-version"
   },
+  "bin": {
+    "donlod-anime": "dist/index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/scrythe/AnimeHut.git"

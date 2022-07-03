@@ -1,8 +1,3 @@
-export interface Episode {
-  name: string;
-  url: string;
-}
-
 export interface Season {
   url: string;
   name: string;
