@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ANIMES } from '../animeList';
+import { AnimeService } from '../anime-service/anime.service';
 import { Anime } from '../interfaces';
 
 @Component({
@@ -8,9 +8,22 @@ import { Anime } from '../interfaces';
   styleUrls: ['./search-anime.component.css'],
 })
 export class SearchAnimeComponent implements OnInit {
-  tasks: Anime[] = ANIMES;
+  animes: Anime[] = [];
+  anime: string = '';
 
-  constructor() {}
+  constructor(private animeService: AnimeService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.animeService
+      .getAllAnimes()
+      .subscribe((animes) => (this.animes = animes));
+  }
+
+  animeSearch(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const searchString = target.value;
+    this.animeService
+      .getAnimesSearch(searchString)
+      .subscribe((animes) => (this.animes = animes));
+  }
 }
