@@ -1,0 +1,32 @@
+input {
+  border: 0;
+  outline: none;
+  color: #adb5bd;
+  background-color: #495057;
+  width: 620px;
+  height: 45px;
+  padding: 5px 20px;
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+ul {
+  overflow: hidden auto;
+  width: 620px;
+  height: 550px;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 7px;
+  min-height: 40px;
+  background: #6c757d;
+}
+
+li {
+  cursor: pointer;
+  padding: 5px 20px;
+}
