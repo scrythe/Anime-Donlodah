@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AnimeService {
   private apiUrl = 'assets/anime-list.json';
+  animeUrl: string = '';
 
   constructor(private http: HttpClient) {}
 

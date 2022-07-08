@@ -6,9 +6,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SearchAnimeComponent } from './search-anime/search-anime.component';
+import { AnimeComponent } from './anime/anime.component';
 
 @NgModule({
-  declarations: [AppComponent, SearchAnimeComponent],
+  declarations: [AppComponent, SearchAnimeComponent, AnimeComponent],
   imports: [BrowserModule, AppRoutingModule, FormsModule, HttpClientModule],
   providers: [],
   bootstrap: [AppComponent],

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AnimeService } from '../anime-service/anime.service';
 import { Anime } from '../interfaces';
 
@@ -11,7 +12,7 @@ export class SearchAnimeComponent implements OnInit {
   animes: Anime[] = [];
   anime: string = '';
 
-  constructor(private animeService: AnimeService) {}
+  constructor(private animeService: AnimeService, private router: Router) {}
 
   ngOnInit(): void {
     this.animeService
@@ -25,5 +26,10 @@ export class SearchAnimeComponent implements OnInit {
     this.animeService
       .getAnimesSearch(searchString)
       .subscribe((animes) => (this.animes = animes));
+  }
+
+  goToAnime(url: string): void {
+    this.animeService.animeUrl = url;
+    this.router.navigate(['anime']);
   }
 }
