@@ -1,0 +1,15 @@
+{
+  "name": "electron-typescript",
+  "version": "0.0.0",
+  "description": "electron typescript test for later when combining with angular",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "tsc && electron ."
+  },
+  "author": "Magomed Alimkhanov",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "19.0.8",
+    "typescript": "^4.7.4"
+  }
+}
