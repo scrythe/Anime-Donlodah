@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8" />
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
     <title>Electron Test</title>
+    <link rel="stylesheet" href="fontawesome/css/all.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="dist/renderer.js"></script>
   </head>
   <body>
-    <h1>yeet</h1>
-
-    <script type="module" src="dist/renderer.js"></script>
+    <div class="topBar">
+      <div class="title">Anime Donlodah</div>
+      <div class="titleBtns">
+        <button class="minimizeBtn" title="Minimize">
+          <i class="fa-regular fa-window-minimize"></i>
+        </button>
+        <button class="maximizeBtn" title="Maximize">
+          <i class="fa-regular fa-square"></i>
+        </button>
+        <button class="closeBtn" title="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
   </body>
 </html>

@@ -1,0 +1,53 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+.topBar {
+  display: flex;
+  position: fixed;
+  flex-direction: row;
+  width: 100%;
+  height: 50px;
+  justify-content: space-between;
+
+  background-color: #212529;
+  color: #fff;
+  user-select: none;
+  -webkit-app-region: drag;
+}
+
+.topBar .title {
+  align-self: center;
+  margin-left: 20px;
+}
+
+.topBar .titleBtns {
+  display: flex;
+  flex-direction: row;
+  width: 150px;
+  -webkit-app-region: no-drag;
+}
+
+.topBar .titleBtns button {
+  outline: none;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  width: 100%;
+  color: #fff;
+}
+
+.topBar .titleBtns button:hover {
+  background-color: #4280ff;
+}
+
+.topBar .titleBtns .closeBtn {
+  font-size: 100%;
+}
+
+.topBar .titleBtns .closeBtn:hover {
+  background-color: #d1495b;
+}

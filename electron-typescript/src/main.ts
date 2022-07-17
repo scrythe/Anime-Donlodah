@@ -8,11 +8,11 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    frame: false,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: join(__dirname, 'preload.js'),
     },
-    // frame: false,
-    // autoHideMenuBar: true,
   });
 
   mainWindow.loadFile('index.html');
