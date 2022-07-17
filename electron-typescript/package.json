@@ -4,7 +4,8 @@
   "description": "electron typescript test for later when combining with angular",
   "main": "dist/main.js",
   "scripts": {
-    "start": "tsc && electron ."
+    "tsc:build": "tsc -p tsconfig.common.json && tsc -p tsconfig.module.json",
+    "start": "npm run tsc:build && electron ."
   },
   "author": "Magomed Alimkhanov",
   "license": "MIT",

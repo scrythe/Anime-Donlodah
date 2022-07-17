@@ -2,6 +2,7 @@
 // const path = require('path');
 import { app, BrowserWindow } from 'electron';
 import { join } from 'path';
+import IpcService from './ipcMain';
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -33,3 +34,14 @@ app.on('window-all-closed', () => {
 // -- Rest
 
 // Stuff
+
+const ipc = new IpcService();
+ipc.on('yeet', () => {
+  console.log('lol');
+  return '2';
+});
+
+ipc.handle('lol', () => {
+  console.log('aah');
+  return 'yeet';
+});
