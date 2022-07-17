@@ -4,6 +4,8 @@ import { app, BrowserWindow } from 'electron';
 import { join } from 'path';
 import IpcService from './ipcMain';
 
+const ipc = new IpcService();
+
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -18,6 +20,19 @@ const createWindow = () => {
   mainWindow.loadFile('index.html');
 
   mainWindow.webContents.openDevTools();
+
+  ipc.on('minimizeApp', () => {
+    mainWindow.minimize();
+  });
+
+  ipc.on('maximizeApp', () => {
+    if (mainWindow.isMaximized()) mainWindow.restore();
+    else mainWindow.maximize();
+  });
+
+  ipc.on('closeApp', () => {
+    mainWindow.close();
+  });
 };
 
 app.whenReady().then(() => {
@@ -34,14 +49,3 @@ app.on('window-all-closed', () => {
 // -- Rest
 
 // Stuff
-
-const ipc = new IpcService();
-ipc.on('yeet', () => {
-  console.log('lol');
-  return '2';
-});
-
-ipc.handle('lol', () => {
-  console.log('aah');
-  return 'yeet';
-});

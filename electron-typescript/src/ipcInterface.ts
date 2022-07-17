@@ -1,6 +1,7 @@
 interface IpcEvents {
-  yeet(): void;
-  lol(): string;
+  minimizeApp(): void;
+  maximizeApp(): void;
+  closeApp(): void;
 }
 
 export type EventNames = keyof IpcEvents;
