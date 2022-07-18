@@ -1,5 +1,3 @@
-// const { app, BrowserWindow } = require('electron');
-// const path = require('path');
 import { app, BrowserWindow } from 'electron';
 import { join } from 'path';
 import IpcService from './ipcMain';
@@ -32,6 +30,14 @@ const createWindow = () => {
 
   ipc.on('closeApp', () => {
     mainWindow.close();
+  });
+
+  mainWindow.on('maximize', () => {
+    mainWindow.webContents.send('isMaximized');
+  });
+
+  mainWindow.on('unmaximize', () => {
+    mainWindow.webContents.send('isRestored');
   });
 };
 

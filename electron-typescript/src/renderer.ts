@@ -14,3 +14,20 @@ const closeBtn = document.querySelector(
 minimizeBtn.addEventListener('click', () => ipc.send('minimizeApp'));
 maximizeBtn.addEventListener('click', () => ipc.send('maximizeApp'));
 closeBtn.addEventListener('click', () => ipc.send('closeApp'));
+
+function changeMaximizeRestoreBtn(isMaximized: boolean) {
+  if (isMaximized) {
+    maximizeBtn.title = 'Restore';
+    maximizeBtn.classList.remove('maximizeBtn');
+    maximizeBtn.classList.add('restoreBtn');
+    maximizeBtn.innerHTML = '<i class="fa-regular fa-window-restore"></i>';
+  } else {
+    maximizeBtn.title = 'Maximize';
+    maximizeBtn.classList.add('maximizeBtn');
+    maximizeBtn.classList.remove('restoreBtn');
+    maximizeBtn.innerHTML = '<i class="fa-regular fa-square"></i>';
+  }
+}
+
+ipc.on('isMaximized', () => changeMaximizeRestoreBtn(true));
+ipc.on('isRestored', () => changeMaximizeRestoreBtn(false));

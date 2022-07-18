@@ -1,20 +1,34 @@
 import { ipcRenderer, contextBridge } from 'electron';
-import { EventNames, EventParameters, EventReturnType } from './ipcInterface';
+import {
+  RendererEventNames,
+  RendererEventParameters,
+  RendererEventReturnType,
+  MainEventNames,
+  MainEventListener,
+} from './ipcInterface';
 
 contextBridge.exposeInMainWorld('api', {
-  send<EventName extends EventNames>(
+  send<EventName extends RendererEventNames>(
     channel: EventName,
-    ...args: EventParameters<EventName>
+    ...args: RendererEventParameters<EventName>
   ) {
     ipcRenderer.send(channel, args);
   },
 
-  invoke<EventName extends EventNames>(
+  invoke<EventName extends RendererEventNames>(
     channel: EventName,
-    ...args: EventParameters<EventName>
-  ): Promise<EventReturnType<EventName>> {
-    return ipcRenderer.invoke(channel, args) as Promise<
-      EventReturnType<EventName>
-    >;
+    ...args: RendererEventParameters<EventName>
+  ): RendererEventReturnType<EventName> {
+    return ipcRenderer.invoke(
+      channel,
+      args
+    ) as RendererEventReturnType<EventName>;
+  },
+
+  on<EventName extends MainEventNames>(
+    channel: EventName,
+    listener: MainEventListener<EventName>
+  ) {
+    ipcRenderer.on(channel, listener);
   },
 });
