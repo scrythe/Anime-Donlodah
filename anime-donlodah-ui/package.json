@@ -1,7 +1,7 @@
 {
   "name": "anime-donlodah-ui",
   "version": "0.0.0",
-  "main": "app/dist/main.js",
+  "main": "app/dist/app/src/main.js",
   "scripts": {
     "ng": "ng",
     "ng:serve": "ng serve",

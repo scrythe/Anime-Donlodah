@@ -22,7 +22,7 @@ const createWindow = () => {
     mainWindow.loadURL('http://localhost:4200');
     mainWindow.webContents.openDevTools();
     const electronReload = require('electron-reloader');
-    electronReload(module, { debug: true, watchRenderer: true });
+    electronReload(module, {});
   } else {
     mainWindow.loadFile('index.html');
   }

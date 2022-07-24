@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "rootDir": "./src",
     "outDir": "./dist",
     "target": "ES2017",
     "module": "CommonJS",
@@ -33,5 +32,6 @@
     "allowUnreachableCode": true,
 
     "skipLibCheck": true
-  }
+  },
+  "include": ["./", "./../globalInterfaces/"]
 }
