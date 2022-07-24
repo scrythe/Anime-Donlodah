@@ -52,6 +52,21 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
+const nodeEnv = process.env['NODE_ENV']?.trim();
+
+if (nodeEnv == 'development') {
+  try {
+    import('electron-reloader').then((electronReload) =>
+      electronReload.default(module, {
+        debug: true,
+        watchRenderer: true,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 // -- Rest
 
 // Stuff

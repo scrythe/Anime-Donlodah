@@ -5,12 +5,18 @@
   "main": "dist/main.js",
   "scripts": {
     "tsc:build": "tsc -p tsconfig.common.json && tsc -p tsconfig.module.json",
-    "start": "npm run tsc:build && electron ."
+    "tsc:watch": "concurrently \"tsc -p tsconfig.common.json -w\" \"tsc -p tsconfig.module.json -w\"",
+    "electron:start": "electron .",
+    "electron:serve": "set NODE_ENV=development && electron .",
+    "start": "npm run tsc:build && npm run electron:start",
+    "serve": "concurrently \"npm run tsc:watch\" \"npm run electron:serve\""
   },
   "author": "Magomed Alimkhanov",
   "license": "MIT",
   "devDependencies": {
+    "concurrently": "^7.3.0",
     "electron": "19.0.8",
+    "electron-reloader": "^1.2.3",
     "typescript": "^4.7.4"
   }
 }
