@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AnimeService } from '../anime-service/anime.service';
-import { ElectronService } from '../electron-service/electron.service';
 import { Anime } from '../interfaces';
 
 @Component({
@@ -13,13 +12,7 @@ export class SearchAnimeComponent implements OnInit {
   animes: Anime[] = [];
   anime: string = '';
 
-  constructor(
-    private animeService: AnimeService,
-    private router: Router,
-    private electronService: ElectronService
-  ) {
-    electronService.send('maximizeApp');
-  }
+  constructor(private animeService: AnimeService, private router: Router) {}
 
   ngOnInit(): void {
     this.animeService
