@@ -6,7 +6,7 @@ import {
   RendererEventReturnType,
   MainEventNames,
   MainEventListener,
-} from 'globalInterfaces/ipcInterface';
+} from 'globalInterfaces/ipcInterfaceOld';
 
 declare global {
   interface Window {

@@ -2,7 +2,7 @@ import { ipcMain } from 'electron';
 import {
   RendererEventNames,
   RendererEventListener,
-} from '../../globalInterfaces/ipcInterface';
+} from '../../globalInterfaces/ipcInterfaceOld';
 
 class IpcService {
   on<EventName extends RendererEventNames>(

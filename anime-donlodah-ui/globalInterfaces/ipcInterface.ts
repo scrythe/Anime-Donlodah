@@ -1,56 +1,94 @@
-export interface IpcRendererToMain {
+import { IpcRendererEvent } from 'electron';
+
+interface IpcRendererToMain {
   minimizeApp(): void;
   maximizeApp(): void;
   closeApp(): void;
+  test(a: string): void;
 }
 
-export interface IpcMainToRenderer {
-  isMaximized(): void;
-  isRestored(): void;
+interface IpcMainToRenderer {
+  isMaximized(event: IpcRendererEvent): void;
+  isRestored(event: IpcRendererEvent): void;
+  test(event: IpcRendererEvent, a: string): void;
 }
+
+// type EventListType = 'toMain' | 'toRenderer';
 
 interface EventsMap {
-  [event: string]: any;
+  [eventName: string]: any;
 }
+
+// type EventList<ListType extends EventListType> = ListType extends 'toMain'
+//   ? IpcRendererToMain
+//   : IpcMainToRenderer;
 
 type EventNames<EventList extends EventsMap> = keyof EventList;
 
-type EventListener<
-  EventList extends EventsMap,
-  Event extends EventNames<EventList>
-> = EventList[Event];
-
 type EventParameters<
   EventList extends EventsMap,
-  Event extends EventNames<EventList>
-> = Parameters<EventListener<EventList, Event>>;
+  EventName extends EventNames<EventList>
+> = Parameters<EventList[EventName]>;
 
 type EventReturnType<
   EventList extends EventsMap,
-  Event extends EventNames<EventList>
-> = ReturnType<EventListener<EventList, Event>>;
+  EventName extends EventNames<EventList>
+> = ReturnType<EventList[EventName]>;
+
+export type EventListenerArgs<
+  EventList extends EventsMap,
+  EventName extends EventNames<EventList>
+> = EventParameters<EventList, EventName> extends []
+  ? never
+  : EventParameters<EventList, EventName>;
+
+// type TotalEventArgs<
+//   EventList extends EventsMap,
+//   EventName extends EventNames<EventList>,
+//   EventParameter extends Event
+// > = EventListenerArgs<EventList, EventName> extends never
+//   ? [event: EventParameter]
+//   : [event: EventParameter, ...args: EventListenerArgs<EventList, EventName>];
+
+// type EventListener<
+//   EventList extends EventsMap,
+//   EventName extends EventNames<EventList>,
+//   EventParameter extends Event
+// > = EventListenerArgs<EventList, EventName> extends never
+//   ? (event: EventParameter) => EventReturnType<EventList, EventName>
+//   : (
+//       event: EventParameter,
+//       ...args: EventListenerArgs<EventList, EventName>
+//     ) => EventReturnType<EventList, EventName>;
+
+type EventListener<
+  EventList extends EventsMap,
+  EventName extends EventNames<EventList>
+> = EventList[EventName];
+
+export type toMainEventNames = EventNames<IpcRendererToMain>;
+
+export type toMainEventParameters<EventName extends toMainEventNames> =
+  EventParameters<IpcRendererToMain, EventName>;
+
+export type returnTypeBackToRenderer<EventName extends toMainEventNames> =
+  Promise<EventReturnType<IpcRendererToMain, EventName>>;
+
+export type toMainEventListener<EventName extends toMainEventNames> =
+  EventListener<IpcRendererToMain, EventName>;
 
 // -- --
 
-export type RendererEventNames = EventNames<IpcRendererToMain>;
+export type toRendererEventNames = keyof IpcMainToRenderer;
 
-export type RendererEventListener<Event extends EventNames<IpcRendererToMain>> =
-  IpcRendererToMain[Event];
+export type toRendererEventParameters<EventName extends toRendererEventNames> =
+  Parameters<IpcMainToRenderer[EventName]>;
 
-export type RendererEventParameters<
-  Event extends EventNames<IpcRendererToMain>
-> = EventParameters<IpcRendererToMain, Event>;
+export type toRendererEventListener<EventName extends toRendererEventNames> =
+  IpcMainToRenderer[EventName];
 
-export type RendererEventReturnType<
-  Event extends EventNames<IpcRendererToMain>
-> = Promise<EventReturnType<IpcRendererToMain, Event>>;
-
-// -- --
-
-export type MainEventNames = EventNames<IpcMainToRenderer>;
-
-export type MainEventListener<Event extends EventNames<IpcMainToRenderer>> =
-  IpcMainToRenderer[Event];
-
-export type MainEventParameters<Event extends EventNames<IpcMainToRenderer>> =
-  EventParameters<IpcMainToRenderer, Event>;
+// type test<EventName extends toMainEventNames> = EventListener<
+//   IpcRendererToMain,
+//   EventName,
+//   Event
+// >;
