@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { IpcRenderer } from 'electron';
 import {
-  RendererEventNames,
-  RendererEventParameters,
-  RendererEventReturnType,
-  MainEventNames,
-  MainEventListener,
-} from 'globalInterfaces/ipcInterfaceOld';
+  toMainEventNamesSend,
+  toMainEventNamesInvoke,
+  toMainEventParametersSend,
+  toMainEventParametersInvoke,
+  returnTypeBackToRendererInvoke,
+  toRendererEventNames,
+  toRendererEventListener,
+} from 'globalInterfaces/ipcInterface';
 
 declare global {
   interface Window {
@@ -24,26 +26,26 @@ export class ElectronService {
     this.ipcRenderer = window.api;
   }
 
-  send<EventName extends RendererEventNames>(
+  send<EventName extends toMainEventNamesSend>(
     channel: EventName,
-    ...args: RendererEventParameters<EventName>
+    ...args: toMainEventParametersSend<EventName>
   ) {
     this.ipcRenderer.send(channel, args);
   }
 
-  invoke<EventName extends RendererEventNames>(
+  invoke<EventName extends toMainEventNamesInvoke>(
     channel: EventName,
-    ...args: RendererEventParameters<EventName>
-  ): RendererEventReturnType<EventName> {
+    ...args: toMainEventParametersInvoke<EventName>
+  ): returnTypeBackToRendererInvoke<EventName> {
     return this.ipcRenderer.invoke(
       channel,
       args
-    ) as RendererEventReturnType<EventName>;
+    ) as returnTypeBackToRendererInvoke<EventName>;
   }
 
-  on<EventName extends MainEventNames>(
+  on<EventName extends toRendererEventNames>(
     channel: EventName,
-    listener: MainEventListener<EventName>
+    listener: toRendererEventListener<EventName>
   ) {
     this.ipcRenderer.on(channel, listener);
   }

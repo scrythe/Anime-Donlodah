@@ -1,31 +1,30 @@
-import { ipcRenderer, contextBridge, IpcRendererEvent } from 'electron';
+import { ipcRenderer, contextBridge } from 'electron';
 import {
-  toMainEventNames,
-  toMainEventParameters,
-  returnTypeBackToRenderer,
+  toMainEventNamesSend,
+  toMainEventNamesInvoke,
+  toMainEventParametersSend,
+  toMainEventParametersInvoke,
+  returnTypeBackToRendererInvoke,
   toRendererEventNames,
   toRendererEventListener,
-  toRendererEventParameters,
-  EventListenerArgs,
 } from '../../globalInterfaces/ipcInterface';
-import { IpcMainToRenderer } from '../../globalInterfaces/ipcInterfaceOld';
 
 contextBridge.exposeInMainWorld('api', {
-  send<EventName extends toMainEventNames>(
+  send<EventName extends toMainEventNamesSend>(
     channel: EventName,
-    ...args: toMainEventParameters<EventName>
+    ...args: toMainEventParametersSend<EventName>
   ) {
     ipcRenderer.send(channel, args);
   },
 
-  invoke<EventName extends toMainEventNames>(
+  invoke<EventName extends toMainEventNamesInvoke>(
     channel: EventName,
-    ...args: toMainEventParameters<EventName>
-  ): returnTypeBackToRenderer<EventName> {
+    ...args: toMainEventParametersInvoke<EventName>
+  ): returnTypeBackToRendererInvoke<EventName> {
     return ipcRenderer.invoke(
       channel,
       args
-    ) as returnTypeBackToRenderer<EventName>;
+    ) as returnTypeBackToRendererInvoke<EventName>;
   },
 
   on<EventName extends toRendererEventNames>(
@@ -34,25 +33,6 @@ contextBridge.exposeInMainWorld('api', {
   ) {
     channel;
     listener;
-    // ipcRenderer.on(channel, listener);
+    ipcRenderer.on(channel, listener);
   },
 });
-
-const test = <EventName extends toRendererEventNames>(
-  channel: EventName,
-  listener: toRendererEventListener<EventName>
-) => {
-  channel;
-  listener;
-  ipcRenderer.on(channel, listener);
-};
-
-const test2 = <EventName extends toRendererEventNames>(
-  _channel: EventName,
-  args: EventListenerArgs<IpcMainToRenderer, EventName>
-) => {
-  const test: any[] = args;
-  test;
-};
-
-// test('isMaximized', (event) => {});

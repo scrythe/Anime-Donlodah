@@ -1,20 +1,22 @@
 import { ipcMain } from 'electron';
 import {
-  RendererEventNames,
-  RendererEventListener,
-} from '../../globalInterfaces/ipcInterfaceOld';
+  toMainEventNamesSend,
+  toMainEventNamesInvoke,
+  toMainEventListenerSend,
+  toMainEventListenerInvoke,
+} from '../../globalInterfaces/ipcInterface';
 
 class IpcService {
-  on<EventName extends RendererEventNames>(
+  on<EventName extends toMainEventNamesSend>(
     channel: EventName,
-    listener: RendererEventListener<EventName>
+    listener: toMainEventListenerSend<EventName>
   ) {
     ipcMain.on(channel, listener);
   }
 
-  handle<EventName extends RendererEventNames>(
+  handle<EventName extends toMainEventNamesInvoke>(
     channel: EventName,
-    listener: RendererEventListener<EventName>
+    listener: toMainEventListenerInvoke<EventName>
   ) {
     ipcMain.handle(channel, listener);
   }
