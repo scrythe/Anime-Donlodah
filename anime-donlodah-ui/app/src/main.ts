@@ -1,11 +1,31 @@
 import { app, BrowserWindow } from 'electron';
 import { join } from 'path';
-import IpcService from './ipcMain';
+import IpcService, { WebContentsService } from './ipcMain';
 
 const args = process.argv.slice(1);
 const serve = args.some((val) => val === '--serve');
 
 const ipc = new IpcService();
+
+// interface WebContentsWithSend extends WebContents {
+//   send: WebContentsSend;
+// }
+
+// declare namespace BrowserWindow.prototype {
+//   interface WebContents {
+//     send: WebContentsSend;
+//   }
+// }
+
+// interface BrowserWindow {
+//   webContents: WebContentsWithSend;
+// }
+
+// BrowserWindow.prototype.webContents.asdasda
+
+// declare var mainWindow.webContents.send {
+//   // webContents: WebContentsWithSend;
+// }
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -27,6 +47,8 @@ const createWindow = () => {
     mainWindow.loadFile('index.html');
   }
 
+  const webContentsService = new WebContentsService(mainWindow.webContents);
+
   ipc.on('minimizeApp', () => {
     mainWindow.minimize();
   });
@@ -40,12 +62,14 @@ const createWindow = () => {
     mainWindow.close();
   });
 
+  // const webContentsSend: WebContentsSend = mainWindow.webContents.send;
+
   mainWindow.on('maximize', () => {
-    mainWindow.webContents.send('isMaximized');
+    webContentsService.send('isMaximized');
   });
 
   mainWindow.on('unmaximize', () => {
-    mainWindow.webContents.send('isRestored');
+    webContentsService.send('isRestored');
   });
 };
 

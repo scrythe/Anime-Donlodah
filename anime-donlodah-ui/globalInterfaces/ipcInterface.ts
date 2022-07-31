@@ -31,11 +31,6 @@ type EventListener<
   EventName extends EventNames<EventList>
 > = EventList[EventName];
 
-type EventAllParameters<
-  EventList extends EventsMap,
-  EventName extends EventNames<EventList>
-> = Parameters<EventList[EventName]>;
-
 type EventParameters<
   EventList extends EventsMap,
   EventName extends EventNames<EventList>

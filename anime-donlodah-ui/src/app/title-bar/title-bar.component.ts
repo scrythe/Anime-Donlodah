@@ -20,7 +20,9 @@ export class TitleBarComponent implements OnInit {
 
   constructor(private electronService: ElectronService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.electronService.on('isMaximized', () => (this.isMaximizeable = true));
+  }
 
   minimize() {
     this.electronService.send('minimizeApp');
