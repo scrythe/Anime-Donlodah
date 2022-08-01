@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IpcRenderer } from 'electron';
+import { IpcRenderer, IpcRendererEvent, ipcRenderer } from 'electron';
 import {
   toMainEventNamesSend,
   toMainEventNamesInvoke,
@@ -7,8 +7,10 @@ import {
   toMainEventParametersInvoke,
   returnTypeBackToRendererInvoke,
   toRendererEventNames,
+  toRendererEventParameters,
   toRendererEventListener,
 } from 'globalInterfaces/ipcInterface';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 declare global {
   interface Window {
@@ -21,9 +23,13 @@ declare global {
 })
 export class ElectronService {
   ipcRenderer: IpcRenderer;
+  isMaximized$ = new BehaviorSubject<IpcRendererEvent | string>('');
+  isRestored$ = new BehaviorSubject<IpcRendererEvent | string>('');
 
   constructor() {
     this.ipcRenderer = window.api;
+
+    this.on('isRestored', (event) => this.isRestored$.next(event));
   }
 
   send<EventName extends toMainEventNamesSend>(
@@ -48,5 +54,14 @@ export class ElectronService {
     listener: toRendererEventListener<EventName>
   ) {
     this.ipcRenderer.on(channel, listener);
+  }
+
+  getIsMaximized() {
+    this.on('isMaximized', (event) => this.isMaximized$.next(event));
+    return this.isMaximized$.asObservable();
+  }
+  getIsRestored() {
+    this.on('isRestored', (event) => this.isRestored$.next(event));
+    return this.isRestored$.asObservable();
   }
 }

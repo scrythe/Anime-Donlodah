@@ -7,26 +7,6 @@ const serve = args.some((val) => val === '--serve');
 
 const ipc = new IpcService();
 
-// interface WebContentsWithSend extends WebContents {
-//   send: WebContentsSend;
-// }
-
-// declare namespace BrowserWindow.prototype {
-//   interface WebContents {
-//     send: WebContentsSend;
-//   }
-// }
-
-// interface BrowserWindow {
-//   webContents: WebContentsWithSend;
-// }
-
-// BrowserWindow.prototype.webContents.asdasda
-
-// declare var mainWindow.webContents.send {
-//   // webContents: WebContentsWithSend;
-// }
-
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -61,8 +41,6 @@ const createWindow = () => {
   ipc.on('closeApp', () => {
     mainWindow.close();
   });
-
-  // const webContentsSend: WebContentsSend = mainWindow.webContents.send;
 
   mainWindow.on('maximize', () => {
     webContentsService.send('isMaximized');
