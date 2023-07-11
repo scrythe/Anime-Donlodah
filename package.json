@@ -1,7 +1,8 @@
 {
-  "name": "Anime-Donlodah",
+  "name": "anime-donlodah",
   "version": "0.0.0",
   "description": "",
+  "author": "Magomed Alimkhanov",
   "scripts": {
     "start": "vite",
     "dev": "vite",
