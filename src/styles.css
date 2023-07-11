@@ -56,15 +56,6 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  border-color: #4280ff;
-}
-
-button:active {
-  border-color: #396cd8;
-  background-color: #0f0f0f69;
-}
-
 input,
 button {
   outline: none;
