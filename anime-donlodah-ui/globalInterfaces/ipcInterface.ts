@@ -4,20 +4,14 @@ interface IpcRendererToMainSend {
   minimizeApp(event: IpcMainEvent): void;
   maximizeApp(event: IpcMainEvent): void;
   closeApp(event: IpcMainEvent): void;
-  test(event: IpcMainEvent, a: string, b: string): void;
 }
 
 interface IpcRendererToMainInvoke {
-  minimizeApp(event: IpcMainInvokeEvent): void;
-  maximizeApp(event: IpcMainInvokeEvent): void;
-  closeApp(event: IpcMainInvokeEvent): void;
-  test(event: IpcMainInvokeEvent, a: string): void;
+  isMaximized(event: IpcMainInvokeEvent): boolean;
 }
 
 interface IpcMainToRenderer {
-  isMaximized(event: IpcRendererEvent): void;
-  isRestored(event: IpcRendererEvent): void;
-  test(event: IpcRendererEvent, a: string): void;
+  windowSizeChange(event: IpcRendererEvent, isMaximized: boolean): void;
 }
 
 interface EventsMap {

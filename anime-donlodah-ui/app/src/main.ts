@@ -43,11 +43,15 @@ const createWindow = () => {
   });
 
   mainWindow.on('maximize', () => {
-    webContentsService.send('isMaximized');
+    webContentsService.send('windowSizeChange', mainWindow.isMaximized());
   });
 
   mainWindow.on('unmaximize', () => {
-    webContentsService.send('isRestored');
+    webContentsService.send('windowSizeChange', mainWindow.isMaximized());
+  });
+
+  ipc.handle('isMaximized', () => {
+    return mainWindow.isMaximized();
   });
 };
 

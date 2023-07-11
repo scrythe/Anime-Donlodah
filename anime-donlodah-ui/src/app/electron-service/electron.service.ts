@@ -10,7 +10,7 @@ import {
   toRendererEventParameters,
   toRendererEventListener,
 } from 'globalInterfaces/ipcInterface';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, from, Subscriber } from 'rxjs';
 
 declare global {
   interface Window {
@@ -23,13 +23,12 @@ declare global {
 })
 export class ElectronService {
   ipcRenderer: IpcRenderer;
-  isMaximized$ = new BehaviorSubject<IpcRendererEvent | string>('');
-  isRestored$ = new BehaviorSubject<IpcRendererEvent | string>('');
+  windowSizeChange$: Subject<boolean>;
 
   constructor() {
     this.ipcRenderer = window.api;
-
-    this.on('isRestored', (event) => this.isRestored$.next(event));
+    this.windowSizeChange$ = new Subject();
+    this.createWindowSizeChange();
   }
 
   send<EventName extends toMainEventNamesSend>(
@@ -56,12 +55,34 @@ export class ElectronService {
     this.ipcRenderer.on(channel, listener);
   }
 
-  getIsMaximized() {
-    this.on('isMaximized', (event) => this.isMaximized$.next(event));
-    return this.isMaximized$.asObservable();
+  isMaximized(): Observable<boolean> {
+    const isMaximized = this.invoke('isMaximized');
+    return from(isMaximized);
   }
-  getIsRestored() {
-    this.on('isRestored', (event) => this.isRestored$.next(event));
-    return this.isRestored$.asObservable();
+
+  private createWindowSizeChange() {
+    this.on('windowSizeChange', (_event, isMaximized) => {
+      this.windowSizeChange$.next(isMaximized);
+    });
+  }
+
+  windowSizeChange() {
+    return new Observable<boolean>((subscriber) => {
+      this.on('windowSizeChange', (_event, isMaximized) => {
+        this.windowSizeChangeFunc(subscriber, isMaximized);
+      });
+    });
+  }
+
+  windowSizeChangeFunc(subscriber: Subscriber<boolean>, isMaximized: boolean) {
+    subscriber.next(isMaximized);
+  }
+
+  test() {
+    const testObservable = new Subject<string>();
+    setTimeout(() => this.windowSizeChange$.next(true), 2000);
+    setTimeout(() => this.windowSizeChange$.next(false), 4000);
+    setTimeout(() => this.windowSizeChange$.next(true), 6000);
+    return testObservable;
   }
 }

@@ -5,12 +5,13 @@
   </button>
   <button
     (click)="maximize()"
-    [ngClass]="isMaximizeable ? 'maximizeBtn' : 'restoreBtn'"
-    [title]="isMaximizeable ? 'Maximize' : 'Restore'"
+    [ngClass]="isMaximized$ ? 'restoreBtn' : 'maximizeBtn'"
+    [title]="isMaximized$ ? 'Restore' : 'Maximize'"
   >
     <fa-icon [icon]="maximizeMaximizeIcon"></fa-icon>
   </button>
   <button (click)="close()" class="closeBtn" title="Close">
     <fa-icon [icon]="closeIcon"></fa-icon>
   </button>
+  {{ isMaximized$ }}
 </div>

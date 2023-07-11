@@ -5,6 +5,7 @@ import {
   faWindowRestore,
 } from '@fortawesome/free-regular-svg-icons';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { BehaviorSubject, Observable, Subject, switchMap } from 'rxjs';
 import { ElectronService } from '../electron-service/electron.service';
 
 @Component({
@@ -16,18 +17,27 @@ export class TitleBarComponent implements OnInit {
   minimizeIcon = faWindowMinimize;
   maximizeMaximizeIcon = faSquare;
   closeIcon = faXmark;
-  isMaximizeable = false;
+  isMaximized$?: boolean;
+  $updateSizeValue?: BehaviorSubject<boolean>;
+  tempText = '';
 
   constructor(private electronService: ElectronService) {}
 
   ngOnInit(): void {
-    this.electronService.getIsMaximized().subscribe(() => {
-      this.isMaximizeable = true;
-    });
-    this.electronService.getIsRestored().subscribe(() => {
-      this.isMaximizeable = false;
+    // this.updateIsMaximized();
+    this.electronService.windowSizeChange().subscribe((res) => {
+      this.isMaximized$ = res;
+      console.log(res);
     });
     // on('isMaximized', () => (this.isMaximizeable = true));
+
+    this.electronService.test().subscribe((res) => (this.tempText = res));
+  }
+
+  updateIsMaximized() {
+    this.electronService
+      .isMaximized()
+      .subscribe((res) => (this.isMaximized$ = res));
   }
 
   minimize() {
