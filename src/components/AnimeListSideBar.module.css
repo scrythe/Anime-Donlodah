@@ -1,0 +1,37 @@
+section.animeListSidebar {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    background-color: #2B3035;
+    overflow: hidden auto;
+}
+
+section.animeListSidebar::-webkit-scrollbar {
+    width: 7px;
+}
+
+section.animeListSidebar::-webkit-scrollbar-thumb {
+    border-radius: 7px;
+    min-height: 40px;
+    background: #49515A;
+}
+
+button.animeListItem {
+    text-align: start;
+    margin-top: 5px;
+    background-color: #2B3035;
+}
+
+button.animeListItem:hover {
+    background-color: #373D43;
+}
+
+button.animeListItem:active {
+    background-color: #2B3035;
+}
+
+input.searchInput {
+    margin-bottom: 10px;
+    background-color: #49515A;
+}
+

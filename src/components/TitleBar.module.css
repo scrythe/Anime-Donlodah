@@ -1,0 +1,52 @@
+div.titlebar {
+    height: 40px;
+    background: #212529;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+div.logoDiv {
+    display: flex;
+    align-items: center;
+}
+
+div.titleText {
+    font-size: 1.1em;
+    margin: 0 12px;
+    color: #e8e8e8;
+}
+
+nav.titleBarNav {
+    display: flex;
+}
+
+div.titlebarButton {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 60px;
+    padding: 0 10px;
+}
+
+div.titlebarButton svg {
+    height: 40%;
+    fill: #fff;
+}
+
+div.titlebarButton.closeBtn svg {
+    height: 50%;
+}
+
+div.titlebarButton:hover {
+    background-color: #4280ff;
+}
+
+div.titlebarButton.closeBtn:hover {
+    background-color: #d1495b;
+}
