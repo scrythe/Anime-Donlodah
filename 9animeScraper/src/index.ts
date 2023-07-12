@@ -19,3 +19,5 @@ app.get('/animeList', async (_req, res) => {
   const animes = await prisma.anime.findMany();
   res.status(200).json({ animes });
 });
+
+export default app;

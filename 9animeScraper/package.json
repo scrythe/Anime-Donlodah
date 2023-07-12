@@ -4,7 +4,9 @@
   "description": "Scrapes data on 9anime and is online on website",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon"
+    "start": "ts-node src/index.ts",
+    "build": "prisma generate",
+    "dev": "nodemon"
   },
   "repository": {
     "type": "git",
@@ -30,6 +32,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.0.0",
+    "@vercel/postgres": "^0.4.0",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
