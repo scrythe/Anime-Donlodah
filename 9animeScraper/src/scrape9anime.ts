@@ -1,12 +1,15 @@
 import { Browser, Page } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import randomUseragent from 'random-useragent';
 
 interface Anime {
   name: string;
   link: string;
 }
+
+// const randomChromeUserAgent = randomUseragent.getRandom(
+//   (ua) => ua.browserName === 'Chrome'
+// );
 
 async function createPuppeteerBrowser(): Promise<Browser> {
   puppeteer.use(StealthPlugin());
@@ -14,11 +17,12 @@ async function createPuppeteerBrowser(): Promise<Browser> {
   return browser;
 }
 
-async function createNewPage(browser: Browser): Promise<Page> {
-  //Randomize User agent or Set a valid one
-  const userAgent = randomUseragent.getRandom();
+async function createNewPage(
+  browser: Browser,
+  skipRequests: boolean
+): Promise<Page> {
   const page = await browser.newPage();
-  await page.setUserAgent(userAgent);
+  // await page.setUserAgent(randomChromeUserAgent);
 
   //Randomize viewport size
   await page.setViewport({
@@ -30,6 +34,7 @@ async function createNewPage(browser: Browser): Promise<Page> {
     isMobile: false,
   });
 
+  if (!skipRequests) return page;
   //Skip images/styles/fonts loading for performance
   await page.setRequestInterception(true);
   page.on('request', (req) => {
@@ -46,29 +51,34 @@ async function createNewPage(browser: Browser): Promise<Page> {
   return page;
 }
 
-async function makePageWaitRandomTime(page: Page) {
-  await page.waitForTimeout((Math.floor(Math.random() * 12) + 5) * 1000);
-}
-
-async function selectorNotFound(page: Page) {
-  await page.setRequestInterception(false);
+async function selectorNotFound(browser: Browser) {
   console.log('Selector not found');
+  const page = await createNewPage(browser, false);
+  await page.goto('https://9anime.to/az-list');
+  return;
 }
 
 async function getAnimeList() {
   const browser = await createPuppeteerBrowser();
-  const page = await createNewPage(browser);
-  const animesAmount = await getAnimesAmount(page);
-  console.log(animesAmount);
+  const page = await createNewPage(browser, true);
+  const animesAmount = await getAnimesAmount(browser, page);
   const allAnimes = await getAllAnimes(page, animesAmount);
-  console.log(allAnimes);
   browser.close();
   return;
 }
 
-async function getAnimesAmount(page: Page): Promise<number> {
-  page.goto('https://9anime.to/az-list');
-  const lastPageLinkEl = await page.waitForSelector('a.page-link[rel=last]');
+async function getAnimesAmount(browser: Browser, page: Page): Promise<number> {
+  await page.goto('https://9anime.to/az-list');
+  let lastPageLinkEl = await page
+    .waitForSelector('a.page-link[rel=last]', {
+      timeout: 5000,
+    })
+    .catch(() => selectorNotFound(browser));
+  if (!lastPageLinkEl)
+    lastPageLinkEl = await page.waitForSelector('a.page-link[rel=last]', {
+      timeout: 0,
+    });
+
   const lastPageLink = await lastPageLinkEl.evaluate((el) => el.href);
   const lastPageNumberStr = lastPageLink.split('page=')[1];
   return parseInt(lastPageNumberStr);
