@@ -1,6 +1,9 @@
 import { Browser, Page } from 'puppeteer';
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 interface Anime {
   name: string;
@@ -58,13 +61,18 @@ async function selectorNotFound(browser: Browser) {
   return;
 }
 
-async function getAnimeList() {
+async function addAnimesToDb() {
+  const animes = await getAnimeList();
+  await prisma.anime.createMany({ data: animes });
+}
+
+async function getAnimeList(): Promise<Anime[]> {
   const browser = await createPuppeteerBrowser();
   const page = await createNewPage(browser, true);
   const animesAmount = await getAnimesAmount(browser, page);
   const allAnimes = await getAllAnimes(page, animesAmount);
   browser.close();
-  return;
+  return allAnimes;
 }
 
 async function getAnimesAmount(browser: Browser, page: Page): Promise<number> {
@@ -116,6 +124,5 @@ async function getAnimesFromPage(
   return animes;
 }
 
-getAnimeList();
-
-export default getAnimeList;
+addAnimesToDb();
+export default addAnimesToDb;

@@ -15,6 +15,7 @@ datasource db {
 model Anime {
   id      Int      @id @default(autoincrement())
   name    String
+  link    String
   seasons Season[]
 }
 
